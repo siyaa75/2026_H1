@@ -1190,9 +1190,9 @@ function renderTable(){
       <td class="editable-td"><input class="cell-input text-left" data-field="status" value="${escapeHtml(r.status||'')}" placeholder="狀態" list="status-options"></td>
       <td class="editable-td"><input class="cell-input" data-field="project_budget" value="${r.project_budget!=null?Math.round(r.project_budget):''}" placeholder="—"></td>
       <td class="editable-td"><input class="cell-input" data-field="cost" value="${r.cost!=null?Math.round(r.cost):''}" placeholder="—"></td>
-      <td class="editable-td" style="display:flex;align-items:center;gap:6px;">
+      <td class="editable-td">
         ${r.allocated
-          ? `<input class="cell-input" data-field="group_budget" value="${r.group_budget!=null?Math.round(r.group_budget):''}" placeholder="0" style="flex:1">`
+          ? `<input class="cell-input" data-field="group_budget" value="${r.group_budget!=null?Math.round(r.group_budget):''}" placeholder="0">`
           : `<span class="alloc-toggle is-pending" data-action="toggle-alloc">未分配・點擊輸入</span>`}
       </td>
       <td class="num" style="color:${catInfo.color}">
