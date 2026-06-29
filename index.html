@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2026 H1 前製部專案預算總覽 — 導演組 × 概念組</title>
+<title>2026 H1 前製部 專案預算總覽 — 導演組 × 概念組</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -311,16 +311,45 @@
     border-top:1px dashed var(--line);
   }
 
-  /* ===== Status distribution ===== */
-  .status-bar{
-    display:flex;height:34px;border-radius:4px;overflow:hidden;border:1px solid var(--line);
+  /* ===== Department & deficit-category color coding ===== */
+  .legend-strip{
+    display:flex;flex-wrap:wrap;gap:18px;
+    padding:13px 16px;
+    margin-bottom:16px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:var(--panel-2);
+    font-size:11.5px;
+    color:var(--mute);
   }
-  .status-seg{height:100%;position:relative;}
-  .status-legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:14px;font-size:12px;color:var(--mute);}
-  .status-legend .item{display:flex;align-items:center;gap:7px;}
-  .status-legend .swatch{width:10px;height:10px;border-radius:2px;}
-  .status-pair{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
-  .status-pair h4{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);font-family:'IBM Plex Mono',monospace;margin:0 0 10px;font-weight:500;}
+  .legend-group{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .legend-group .legend-title{color:var(--mute-2);font-family:'IBM Plex Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;margin-right:2px;}
+  .legend-chip{display:flex;align-items:center;gap:5px;}
+  .legend-chip .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .legend-sep-v{width:1px;align-self:stretch;background:var(--line);}
+
+  .dept-chip{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:11.5px;
+    padding:3px 9px 3px 7px;
+    border-radius:10px;
+    white-space:nowrap;
+  }
+  .dept-chip .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+
+  .dept-select-wrap{display:flex;align-items:center;gap:7px;}
+  .dept-select-wrap .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+  .cat-badge{
+    display:inline-flex;align-items:center;gap:5px;
+    font-size:10.5px;
+    padding:2px 8px;
+    border-radius:9px;
+    font-family:'IBM Plex Mono',monospace;
+    white-space:nowrap;
+    margin-left:7px;
+  }
+  .cat-badge .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
 
   /* ===== Filter chips ===== */
   .filter-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;align-items:center;}
@@ -435,7 +464,7 @@
 
   @media (max-width:880px){
     .kpi-strip{grid-template-columns:1fr 1fr;}
-    .team-grid,.lb-grid,.status-pair{grid-template-columns:1fr;}
+    .team-grid,.lb-grid{grid-template-columns:1fr;}
     .scope-row{grid-template-columns:1fr;gap:10px;}
     .scope-figs{text-align:left;}
     .masthead{flex-direction:column;align-items:flex-start;}
@@ -655,25 +684,16 @@
     <div class="anomaly-box" id="anomaly-box"></div>
   </div>
 
-  <!-- STATUS DISTRIBUTION -->
-  <div class="section">
-    <div class="section-head">
-      <span class="section-num mono">05</span>
-      <h2>專案狀態分布</h2>
-      <span class="section-line"></span>
-    </div>
-    <div class="status-pair" id="status-pair"></div>
-    <div class="status-legend" id="status-legend"></div>
-  </div>
-
   <!-- FULL TABLE -->
   <div class="section">
     <div class="section-head">
-      <span class="section-num mono">06</span>
+      <span class="section-num mono">05</span>
       <h2>完整專案明細（可編輯）</h2>
       <span class="section-line"></span>
     </div>
     <p class="section-desc">點擊欄位標題排序。數字欄位可直接輸入，「組內預算」留空＝尚未分配。修改後按 Tab 或點別處即會更新上方所有統計。</p>
+
+    <div class="legend-strip" id="legend-strip"></div>
 
     <div class="filter-row">
       <span class="chip active" data-filter-team="all">全部團隊</span>
@@ -809,12 +829,31 @@ function median(arr){
 }
 
 const DEPT_ORDER = ['前製部','廣告部','動畫部','視效部','其他'];
-const STATUS_COLORS = {
-  '已完成':'#74C49A','結案':'#52BAC7','進行中':'#E0A248','暫停':'#6B7080',
-  '掰掰':'#E2685A','飛奧':'#9A6BD6','提案中':'#C7C4BC','未開始':'#3D414B','未標示':'#444'
-};
 const DEPT_OPTIONS = ['前製部','廣告部','動畫部','視效部','其他'];
 const TEAM_OPTIONS = ['概念組','導演組'];
+
+// 部門配色：每個部門一個固定識別色，套用在表格、區間圖、排行榜
+const DEPT_COLORS = {
+  '前製部':'#D98E5A',   // 暖橘陶土色
+  '廣告部':'#5B9BD9',   // 藍
+  '動畫部':'#9A6BD6',   // 紫
+  '視效部':'#4FB6C4',   // 青
+  '其他'  :'#6B7080'    // 中性灰
+};
+function deptColor(d){ return DEPT_COLORS[d] || DEPT_COLORS['其他']; }
+
+// 赤字分類配色：區分「真實獲利」「真實虧損」「待分配暫計」「資料異常」四種狀態
+const CAT_COLORS = {
+  profit  : {color:'#74C49A', label:'真實獲利'},
+  loss    : {color:'#E2685A', label:'真實虧損'},
+  pending : {color:'#E0A248', label:'待分配（暫計）'},
+  anomaly : {color:'#C77DD6', label:'資料異常'}
+};
+function profitCategory(r){
+  if(r.allocated && r.group_budget!=null && r.group_budget<0) return 'anomaly';
+  if(!r.allocated) return 'pending';
+  return deriveProfit(r) >= 0 ? 'profit' : 'loss';
+}
 
 /* ====================== MASTER RENDER ====================== */
 function renderAll(){
@@ -824,8 +863,21 @@ function renderAll(){
   renderTeamPanels();
   renderDeptScope();
   renderLeaderboards();
-  renderStatusDist();
+  renderLegendStrip();
   renderTable();
+}
+
+function renderLegendStrip(){
+  const deptHtml = DEPT_ORDER.map(d=>
+    `<span class="legend-chip"><span class="dot" style="background:${deptColor(d)}"></span>${d}</span>`
+  ).join('');
+  const catHtml = Object.entries(CAT_COLORS).map(([key,c])=>
+    `<span class="legend-chip"><span class="dot" style="background:${c.color}"></span>${c.label}</span>`
+  ).join('');
+  document.getElementById('legend-strip').innerHTML = `
+    <div class="legend-group"><span class="legend-title">部門</span>${deptHtml}</div>
+    <div class="legend-sep-v"></div>
+    <div class="legend-group"><span class="legend-title">收益分類</span>${catHtml}</div>`;
 }
 
 function renderMasthead(){
@@ -956,11 +1008,13 @@ function renderDeptScope(){
   list.innerHTML = '';
   DEPT_ORDER.forEach(d=>{
     const r = ranges[d];
+    const dc = deptColor(d);
     const row = document.createElement('div');
     row.className = 'scope-row';
+    row.style.borderLeft = `3px solid ${dc}`;
     if(!r.max){
       row.innerHTML = `
-        <div class="scope-dept">${d}<small>0 件有金額</small></div>
+        <div class="scope-dept"><span class="dept-chip" style="background:${dc}22;color:${dc}"><span class="dot" style="background:${dc}"></span>${d}</span><small>0 件有金額</small></div>
         <div class="scope-track"><div class="scope-ruler"></div></div>
         <div class="scope-figs"><div class="range">無登記金額</div><div class="meta">部門內專案多數未填預算</div></div>`;
       list.appendChild(row);
@@ -972,11 +1026,11 @@ function renderDeptScope(){
     const span = maxPct-minPct;
     const medLeft = span>0.01 ? (medPct-minPct)/span*100 : 50;
     row.innerHTML = `
-      <div class="scope-dept">${d}<small>${r.count} 件有金額</small></div>
+      <div class="scope-dept"><span class="dept-chip" style="background:${dc}22;color:${dc}"><span class="dot" style="background:${dc}"></span>${d}</span><small>${r.count} 件有金額</small></div>
       <div class="scope-track">
         <div class="scope-ruler"></div>
-        <div class="scope-bar" style="left:${minPct}%;width:${Math.max(span,1.5)}%">
-          <span class="cap start"></span><span class="cap end"></span>
+        <div class="scope-bar" style="left:${minPct}%;width:${Math.max(span,1.5)}%;background:linear-gradient(90deg, ${dc}55, ${dc}DD)">
+          <span class="cap start" style="background:${dc}"></span><span class="cap end" style="background:${dc}"></span>
           ${span>0.01? `<span class="median-tick" style="left:${medLeft}%"></span>`:''}
         </div>
       </div>
@@ -996,26 +1050,38 @@ function renderLeaderboards(){
       .sort((a,b)=> sortDesc ? b._profit-a._profit : a._profit-b._profit)
       .slice(0,5);
   }
+  function topLossList(team){
+    return RECORDS.filter(r=>r.team===team && r.allocated)
+      .map(r=>({...r, _profit: deriveProfit(r)}))
+      .filter(r=>r._profit<0)
+      .sort((a,b)=>a._profit-b._profit)
+      .slice(0,5);
+  }
   function rowsHtml(list, valueKey){
     if(list.length===0) return `<div class="lb-row"><span class="lb-rank">—</span><span class="lb-name">（無資料）</span><span class="lb-val"></span></div>`;
     return list.map((r,i)=>{
       const val = valueKey==='profit' ? r._profit : (r.cost||0);
-      const cls = valueKey==='profit' ? (val>=0?'gain':'loss') : 'loss';
+      const color = valueKey==='profit' ? (val>=0?CAT_COLORS.profit.color:CAT_COLORS.loss.color) : CAT_COLORS.pending.color;
       const display = valueKey==='profit' ? fmtSigned(val) : ('$'+fmtPlain(Math.abs(val)));
       const shortName = (r.name||'').replace(/^P\d+\s*-\s*/,'');
-      return `<div class="lb-row"><span class="lb-rank">${String(i+1).padStart(2,'0')}</span><span class="lb-name">${escapeHtml(shortName)}<span class="dept-tag">${r.dept||'未分類'}</span></span><span class="lb-val ${cls}">${display}</span></div>`;
+      const dc = deptColor(r.dept);
+      const isAnomaly = r.allocated && r.group_budget!=null && r.group_budget<0;
+      const anomalyMark = isAnomaly ? `<span title="此筆組內預算為負值，疑似資料異常" style="color:${CAT_COLORS.anomaly.color};margin-left:5px;">⚠</span>` : '';
+      return `<div class="lb-row"><span class="lb-rank">${String(i+1).padStart(2,'0')}</span><span class="lb-name">${escapeHtml(shortName)}<span class="dept-tag" style="background:${dc}22;color:${dc};border-radius:8px;padding:1px 7px;">${r.dept||'未分類'}</span>${anomalyMark}</span><span class="lb-val" style="color:${color}">${display}</span></div>`;
     }).join('');
   }
 
   const cTop = topList('概念組', true, true);
   const dTop = topList('導演組', true, true);
-  const cLoss = topList('概念組', false, false);
-  const dLoss = topList('導演組', false, false);
+  const cLossReal = topLossList('概念組');
+  const dLossReal = topLossList('導演組');
+  const cPending = topList('概念組', false, false);
+  const dPending = topList('導演組', false, false);
 
   const allocatedCount = RECORDS.filter(r=>r.allocated).length;
   const pendingCount = RECORDS.filter(r=>!r.allocated).length;
   document.getElementById('lb-desc').textContent =
-    `僅納入已取得組內預算的專案（${allocatedCount} 件），其餘 ${pendingCount} 件因尚未分配，暫不列入「最賺」排行，避免誤判為虧損。`;
+    `「最賺」「最虧」僅統計已取得組內預算的 ${allocatedCount} 件專案的真實盈虧；其餘 ${pendingCount} 件尚未分配預算，另列在「待分配中成本最高」，避免誤判為虧損。`;
 
   document.getElementById('lb-grid').innerHTML = `
     <div class="lb-col">
@@ -1029,14 +1095,24 @@ function renderLeaderboards(){
       <div class="lb-note">僅統計已分配組內預算的專案。</div>
     </div>
     <div class="lb-col">
+      <div class="lb-col-head"><span>概念組　最虧 Top 5</span><span>收益</span></div>
+      ${rowsHtml(cLossReal,'profit')}
+      <div class="lb-note">已分配組內預算、結算後仍虧損的真實案例。</div>
+    </div>
+    <div class="lb-col">
+      <div class="lb-col-head"><span>導演組　最虧 Top 5</span><span>收益</span></div>
+      ${rowsHtml(dLossReal,'profit')}
+      <div class="lb-note">已分配組內預算、結算後仍虧損的真實案例。${dLossReal.some(r=>r.allocated && r.group_budget<0)?' ⚠ 含一筆組內預算為負值的異常資料，詳見下方提醒。':''}</div>
+    </div>
+    <div class="lb-col">
       <div class="lb-col-head"><span>概念組　待分配預算中成本最高 Top 5</span><span>成本</span></div>
-      ${rowsHtml(cLoss,'cost')}
-      <div class="lb-note">此處「成本」非虧損，是尚未取得組內預算前的暫記赤字。</div>
+      ${rowsHtml(cPending,'cost')}
+      <div class="lb-note">此處「成本」非虧損，是尚未取得組內預算前的暫記赤字（黃色＝待分配）。</div>
     </div>
     <div class="lb-col">
       <div class="lb-col-head"><span>導演組　待分配預算中成本最高 Top 5</span><span>成本</span></div>
-      ${rowsHtml(dLoss,'cost')}
-      <div class="lb-note">此處「成本」非虧損，是尚未取得組內預算前的暫記赤字。</div>
+      ${rowsHtml(dPending,'cost')}
+      <div class="lb-note">此處「成本」非虧損，是尚未取得組內預算前的暫記赤字（黃色＝待分配）。</div>
     </div>`;
 
   // anomaly detection: negative group_budget
@@ -1044,47 +1120,14 @@ function renderLeaderboards(){
   const box = document.getElementById('anomaly-box');
   if(anomalies.length){
     box.classList.add('show');
-    box.innerHTML = '<b>⚠ 資料異常提醒：</b>以下專案的「組內預算」登記為負值，可能是填寫錯誤，建議確認後修正：<br>' +
+    box.style.borderColor = CAT_COLORS.anomaly.color+'66';
+    box.style.background = CAT_COLORS.anomaly.color+'14';
+    box.innerHTML = `<b style="color:${CAT_COLORS.anomaly.color}">⚠ 資料異常提醒：</b>以下專案的「組內預算」登記為負值，可能是填寫錯誤，建議確認後修正：<br>` +
       anomalies.map(r=>`・${escapeHtml(r.name)}（${r.team}，組內預算 $${fmtPlain(r.group_budget)}）`).join('<br>');
   } else {
     box.classList.remove('show');
     box.innerHTML = '';
   }
-}
-
-/* ---------- STATUS DISTRIBUTION ---------- */
-function renderStatusDist(){
-  document.getElementById('status-pair').innerHTML = `
-    <div><h4>概念組（${RECORDS.filter(r=>r.team==='概念組').length} 件）</h4><div class="status-bar" id="status-bar-c"></div></div>
-    <div><h4>導演組（${RECORDS.filter(r=>r.team==='導演組').length} 件）</h4><div class="status-bar" id="status-bar-d"></div></div>`;
-
-  function build(team, elId){
-    const rows = RECORDS.filter(r=>r.team===team);
-    const counts = {};
-    rows.forEach(r=>{ const s=r.status||'未標示'; counts[s]=(counts[s]||0)+1; });
-    const total = rows.length || 1;
-    const bar = document.getElementById(elId);
-    Object.entries(counts).sort((a,b)=>b[1]-a[1]).forEach(([status,count])=>{
-      const seg = document.createElement('div');
-      seg.className = 'status-seg';
-      seg.style.width = (count/total*100)+'%';
-      seg.style.background = STATUS_COLORS[status] || '#444';
-      seg.title = status+'：'+count+' 件';
-      bar.appendChild(seg);
-    });
-    return counts;
-  }
-  const cCounts = build('概念組','status-bar-c');
-  const dCounts = build('導演組','status-bar-d');
-  const allStatuses = Array.from(new Set([...Object.keys(cCounts),...Object.keys(dCounts)]));
-  const legend = document.getElementById('status-legend');
-  legend.innerHTML = '';
-  allStatuses.forEach(s=>{
-    const item = document.createElement('div');
-    item.className='item';
-    item.innerHTML = `<span class="swatch" style="background:${STATUS_COLORS[s]||'#444'}"></span>${s}　概念${cCounts[s]||0}／導演${dCounts[s]||0}`;
-    legend.appendChild(item);
-  });
 }
 
 /* ---------- TABLE ---------- */
@@ -1120,7 +1163,10 @@ function renderTable(){
     tr.dataset.id = r._id;
     const teamCls = r.team==='概念組' ? 'concept' : 'director';
     const teamIcon = r.team==='概念組' ? '🎨' : '🎬';
-    const profitCellCls = !r.allocated ? 'pending' : (r.profit>0?'gain':(r.profit<0?'loss':''));
+    const cat = profitCategory(r);
+    const catInfo = CAT_COLORS[cat];
+    const dc = deptColor(r.dept);
+    tr.style.borderLeft = `3px solid ${dc}`;
     const profitDisplay = !r.allocated
       ? ('−'+fmtPlain(Math.abs(r.profit))+'（待分配）')
       : fmtSigned(r.profit);
@@ -1133,10 +1179,13 @@ function renderTable(){
       </td>
       <td class="editable-td"><input class="cell-input text-left" data-field="name" value="${escapeHtml(r.name||'')}" placeholder="專案名稱"></td>
       <td class="editable-td">
-        <select class="cell-input" data-field="dept">
-          <option value="" ${!r.dept?'selected':''}>未分類</option>
-          ${DEPT_OPTIONS.map(d=>`<option value="${d}" ${d===r.dept?'selected':''}>${d}</option>`).join('')}
-        </select>
+        <div class="dept-select-wrap">
+          <span class="dot" style="background:${dc}"></span>
+          <select class="cell-input" data-field="dept" style="flex:1">
+            <option value="" ${!r.dept?'selected':''}>未分類</option>
+            ${DEPT_OPTIONS.map(d=>`<option value="${d}" ${d===r.dept?'selected':''}>${d}</option>`).join('')}
+          </select>
+        </div>
       </td>
       <td class="editable-td"><input class="cell-input text-left" data-field="status" value="${escapeHtml(r.status||'')}" placeholder="狀態" list="status-options"></td>
       <td class="editable-td"><input class="cell-input" data-field="project_budget" value="${r.project_budget!=null?Math.round(r.project_budget):''}" placeholder="—"></td>
@@ -1146,7 +1195,9 @@ function renderTable(){
           ? `<input class="cell-input" data-field="group_budget" value="${r.group_budget!=null?Math.round(r.group_budget):''}" placeholder="0" style="flex:1">`
           : `<span class="alloc-toggle is-pending" data-action="toggle-alloc">未分配・點擊輸入</span>`}
       </td>
-      <td class="num ${profitCellCls}">${profitDisplay}</td>
+      <td class="num" style="color:${catInfo.color}">
+        <span class="dot" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${catInfo.color};margin-right:7px;vertical-align:middle;"></span>${profitDisplay}
+      </td>
       <td style="text-align:center"><button class="row-del-btn" data-action="delete-row" title="刪除此列">×</button></td>
     `;
     tbody.appendChild(tr);
