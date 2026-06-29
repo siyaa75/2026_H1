@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2026 H1 專案預算總覽 — 導演組 × 概念組</title>
+<title>2026 H1 前製部專案預算總覽 — 導演組 × 概念組</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -450,6 +450,129 @@
   @media (prefers-reduced-motion: reduce){
     *{transition:none !important;}
   }
+
+  /* ===== Edit mode additions ===== */
+  .edit-banner{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    margin:18px 0 0;
+    padding:10px 16px;
+    border:1px solid #3A4530;
+    background:rgba(116,196,154,.06);
+    border-radius:var(--radius);
+    font-size:12.5px;
+    color:var(--paper-dim);
+  }
+  .edit-banner .dot{width:7px;height:7px;border-radius:50%;background:var(--gain);flex-shrink:0;}
+  .edit-banner.dirty{border-color:#5A451E;background:rgba(224,162,72,.08);}
+  .edit-banner.dirty .dot{background:var(--concept);animation:pulse 1.6s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+  .edit-banner b{color:var(--paper);}
+  .toolbar-btn{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    border:1px solid var(--line);
+    background:var(--panel-2);
+    color:var(--paper-dim);
+    padding:6px 13px;
+    border-radius:16px;
+    cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;
+    transition:border-color .15s, color .15s;
+    white-space:nowrap;
+  }
+  .toolbar-btn:hover{border-color:var(--mute-2);color:var(--paper);}
+  .toolbar-btn.primary{background:var(--paper);color:var(--ink);border-color:var(--paper);font-weight:600;}
+  .toolbar-btn.primary:hover{opacity:.88;color:var(--ink);}
+  .toolbar-spacer{flex:1;}
+  #file-import{display:none;}
+
+  /* editable inputs inside table */
+  .cell-input{
+    width:100%;
+    background:transparent;
+    border:1px solid transparent;
+    border-radius:3px;
+    color:var(--paper);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    text-align:right;
+    padding:5px 6px;
+    transition:border-color .12s, background .12s;
+  }
+  .cell-input.text-left{text-align:left;font-family:'Noto Sans TC',sans-serif;}
+  .cell-input:hover{border-color:var(--line);background:rgba(255,255,255,.02);}
+  .cell-input:focus{outline:none;border-color:var(--director);background:rgba(82,186,199,.06);}
+  .cell-input::placeholder{color:var(--mute-2);}
+  select.cell-input{
+    text-align:left;
+    font-family:'Noto Sans TC',sans-serif;
+    appearance:none;
+    cursor:pointer;
+    padding-right:18px;
+    background-image:linear-gradient(45deg,transparent 50%, var(--mute) 50%),linear-gradient(135deg, var(--mute) 50%, transparent 50%);
+    background-position:calc(100% - 10px) center, calc(100% - 6px) center;
+    background-size:4px 4px,4px 4px;
+    background-repeat:no-repeat;
+  }
+  select.cell-input option{background:var(--panel);color:var(--paper);}
+
+  td.editable-td{padding:4px 6px;}
+  .row-del-btn{
+    width:22px;height:22px;
+    border-radius:50%;
+    border:1px solid var(--line);
+    background:transparent;
+    color:var(--mute);
+    font-size:13px;
+    line-height:1;
+    cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;
+    transition:all .12s;
+  }
+  .row-del-btn:hover{border-color:var(--loss);color:var(--loss);background:rgba(226,104,90,.08);}
+  .new-row{background:rgba(116,196,154,.04);}
+  .add-row-bar{
+    padding:14px 18px;
+    border-top:1px dashed var(--line);
+    background:var(--panel-2);
+  }
+  .add-row-btn{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12.5px;
+    color:var(--mute);
+    background:none;
+    border:1px dashed var(--line);
+    border-radius:20px;
+    padding:8px 18px;
+    cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px;
+    transition:all .12s;
+  }
+  .add-row-btn:hover{border-color:var(--gain);color:var(--gain);border-style:solid;}
+  .alloc-toggle{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    padding:3px 9px;
+    border-radius:10px;
+    cursor:pointer;
+    border:1px solid var(--line);
+    white-space:nowrap;
+    user-select:none;
+  }
+  .alloc-toggle.is-pending{color:var(--mute-2);background:var(--panel-2);}
+  .alloc-toggle.is-pending:hover{border-color:var(--concept);color:var(--concept);}
+  .anomaly-box{
+    margin-top:14px;
+    padding:13px 16px;
+    border:1px solid #4A2A24;
+    background:rgba(226,104,90,.06);
+    border-radius:var(--radius);
+    font-size:12.5px;
+    color:var(--paper-dim);
+    display:none;
+  }
+  .anomaly-box.show{display:block;}
+  .anomaly-box b{color:var(--loss);}
 </style>
 </head>
 <body>
@@ -458,7 +581,7 @@
   <!-- MASTHEAD -->
   <div class="masthead">
     <div class="masthead-left">
-      <div class="eyebrow">VFX Production · Budget Report</div>
+      <div class="eyebrow">VFX Production · Budget Report · 編輯模式</div>
       <h1>2026 上半年　專案預算總覽</h1>
     </div>
     <div class="masthead-right">
@@ -468,29 +591,20 @@
     </div>
   </div>
 
-  <!-- HERO KPI -->
-  <div class="kpi-strip">
-    <div class="kpi-card">
-      <div class="kpi-label">獨立專案數</div>
-      <div class="kpi-value">71<span class="unit">件</span></div>
-      <div class="kpi-sub">概念組記錄 45 筆・導演組記錄 52 筆，扣除同案重複登記</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">已知客戶總預算</div>
-      <div class="kpi-value">6,894<span class="unit">千元</span></div>
-      <div class="kpi-sub">僅 38 件專案有登記金額，其餘 33 件尚未填列</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">概念組　已分配組內預算達成率</div>
-      <div class="kpi-value" style="color:var(--concept)">28.2<span class="unit">%</span></div>
-      <div class="kpi-sub">21 件已分配預算的專案：成本 186.8万 ／ 預算 260.1万</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">導演組　已分配組內預算達成率</div>
-      <div class="kpi-value" style="color:var(--director)">50.1<span class="unit">%</span></div>
-      <div class="kpi-sub">15 件已分配預算的專案：成本 73.2万 ／ 預算 146.6万</div>
-    </div>
+  <!-- EDIT TOOLBAR -->
+  <div class="edit-banner" id="edit-banner">
+    <span class="dot"></span>
+    <span><b>編輯模式已啟用</b> — 直接點擊表格中的數字或文字即可修改，新增的專案會立即納入所有統計。</span>
+    <span class="toolbar-spacer"></span>
+    <span class="toolbar-btn" id="btn-export-json">⬇ 匯出 JSON</span>
+    <span class="toolbar-btn" id="btn-export-csv">⬇ 匯出 CSV</span>
+    <span class="toolbar-btn" id="btn-import">⬆ 匯入 JSON</span>
+    <input type="file" id="file-import" accept=".json">
+    <span class="toolbar-btn" id="btn-reset" style="color:var(--loss)">↺ 還原原始資料</span>
   </div>
+
+  <!-- HERO KPI -->
+  <div class="kpi-strip" id="kpi-strip"></div>
 
   <!-- KEY INSIGHT -->
   <div class="section">
@@ -499,18 +613,7 @@
       <h2>關鍵發現：盈虧數字目前混雜「已定案」與「未分預算」兩種專案</h2>
       <span class="section-line"></span>
     </div>
-    <div class="callout">
-      <span class="mark">重要</span>
-      <div>
-        <p>兩份表格中，<strong>概念組有 24 件、導演組有 37 件專案的「組內預算」欄位是空白的</strong>（備註多寫「還沒分」）。系統會把這些專案的成本直接列為等額負收益，導致目前的「總收益」數字其實是「真實已結算盈虧」與「等待分預算的暫時赤字」混在一起，會嚴重低估兩組的實際表現。</p>
-        <p>把已分配與未分配兩類分開看，概念組與導演組在<strong>已分配預算的專案上其實都是淨賺的</strong>——只是導演組的預算達成率（50.1%）明顯優於概念組（28.2%），代表導演組目前接到的組內預算相對於成本更寬裕。</p>
-        <div class="figs">
-          <div class="fig"><b class="mono" style="color:var(--loss)">−110.7万</b><span>未分配預算專案的「暫時赤字」（概念+導演合計，非真實虧損）</span></div>
-          <div class="fig"><b class="mono" style="color:var(--gain)">+146.7万</b><span>已分配預算專案的「真實淨收益」（概念+導演合計）</span></div>
-          <div class="fig"><b class="mono">61</b><span>件專案合計仍待組內分配預算（占 71 件中的 86%）</span></div>
-        </div>
-      </div>
-    </div>
+    <div class="callout" id="insight-callout"></div>
   </div>
 
   <!-- TEAM COMPARISON -->
@@ -520,50 +623,8 @@
       <h2>導演組 × 概念組　總覽對照</h2>
       <span class="section-line"></span>
     </div>
-    <p class="section-desc">兩組的「收益」= 組內預算 − 組內成本；尚未分配組內預算的專案，收益欄位以成本的負值暫記，故下方「全部專案」與「已分配專案」兩組數字差異很大。</p>
-    <div class="team-grid">
-
-      <div class="team-panel concept">
-        <div class="team-title">
-          <h3>🎨 概念組</h3>
-          <span class="tag mono">45 件專案</span>
-        </div>
-        <div class="team-rows">
-          <div class="team-row"><span class="k">全部專案・總成本</span><span class="v mono">$2,930,924</span></div>
-          <div class="team-row"><span class="k">全部專案・總收益（含暫計）</span><span class="v mono loss">−$330,231</span></div>
-          <div class="team-divider"></div>
-          <div class="team-row"><span class="k">已分配預算・專案數</span><span class="v mono">21 件</span></div>
-          <div class="team-row"><span class="k">已分配預算・成本</span><span class="v mono">$1,868,334</span></div>
-          <div class="team-row"><span class="k">已分配預算・組內預算</span><span class="v mono">$2,600,693</span></div>
-          <div class="team-row"><span class="k">已分配預算・真實收益</span><span class="v mono gain">+$732,359</span></div>
-        </div>
-        <div class="alloc-bar-wrap">
-          <div class="alloc-bar-label"><span>已分配預算比例</span><span class="mono">21 / 45（47%）</span></div>
-          <div class="alloc-bar"><div class="alloc-bar-fill" style="width:46.7%"></div></div>
-        </div>
-      </div>
-
-      <div class="team-panel director">
-        <div class="team-title">
-          <h3>🎬 導演組</h3>
-          <span class="tag mono">52 件專案</span>
-        </div>
-        <div class="team-rows">
-          <div class="team-row"><span class="k">全部專案・總成本</span><span class="v mono">$1,937,093</span></div>
-          <div class="team-row"><span class="k">全部專案・總收益（含暫計）</span><span class="v mono loss">−$470,911</span></div>
-          <div class="team-divider"></div>
-          <div class="team-row"><span class="k">已分配預算・專案數</span><span class="v mono">15 件</span></div>
-          <div class="team-row"><span class="k">已分配預算・成本</span><span class="v mono">$731,857</span></div>
-          <div class="team-row"><span class="k">已分配預算・組內預算</span><span class="v mono">$1,466,182</span></div>
-          <div class="team-row"><span class="k">已分配預算・真實收益</span><span class="v mono gain">+$734,325</span></div>
-        </div>
-        <div class="alloc-bar-wrap">
-          <div class="alloc-bar-label"><span>已分配預算比例</span><span class="mono">15 / 52（29%）</span></div>
-          <div class="alloc-bar"><div class="alloc-bar-fill" style="width:28.8%"></div></div>
-        </div>
-      </div>
-
-    </div>
+    <p class="section-desc">兩組的「收益」= 組內預算 − 組內成本；尚未分配組內預算的專案，收益欄位以成本的負值暫記。表格中點一下「未分配」標籤即可直接切換為已分配並輸入金額。</p>
+    <div class="team-grid" id="team-grid"></div>
   </div>
 
   <!-- DEPARTMENT RANGE SCOPE -->
@@ -578,7 +639,7 @@
     <div class="scope-legend">
       <div class="item"><span class="swatch" style="background:var(--director)"></span>金額範圍（低 → 高）</div>
       <div class="item"><span class="swatch" style="background:var(--paper);border-radius:1px;width:2px;height:12px;"></span>中位數</div>
-      <div class="item"><span class="swatch" style="background:var(--mute-2);opacity:.5"></span>視效部僅 1 件有登記金額，其餘多數專案未填列預算</div>
+      <div class="item"><span class="swatch" style="background:var(--mute-2);opacity:.5"></span>灰色＝該部門尚無登記金額的專案</div>
     </div>
   </div>
 
@@ -589,50 +650,9 @@
       <h2>已分配預算專案　盈虧排行</h2>
       <span class="section-line"></span>
     </div>
-    <p class="section-desc">僅納入已取得組內預算的專案（其餘 61 件因尚未分配，暫不列入排行，避免誤判為虧損）。</p>
-    <div class="lb-grid">
-
-      <div class="lb-col">
-        <div class="lb-col-head"><span>概念組　最賺 Top 5</span><span>收益</span></div>
-        <div class="lb-row"><span class="lb-rank">01</span><span class="lb-name">薛之謙_萬獸之王演唱會(2D偽Rollcard)<span class="dept-tag">前製部</span></span><span class="lb-val gain">+$397,069</span></div>
-        <div class="lb-row"><span class="lb-rank">02</span><span class="lb-name">Innodisk2026<span class="dept-tag">廣告部</span></span><span class="lb-val gain">+$128,850</span></div>
-        <div class="lb-row"><span class="lb-rank">03</span><span class="lb-name">遊戲橘子_楓之谷PV<span class="dept-tag">前製部</span></span><span class="lb-val gain">+$122,569</span></div>
-        <div class="lb-row"><span class="lb-rank">04</span><span class="lb-name">泓德能源_企業影片(綠能未來)<span class="dept-tag">前製部</span></span><span class="lb-val gain">+$85,862</span></div>
-        <div class="lb-row"><span class="lb-rank">05</span><span class="lb-name">ROGEqualizerVideo<span class="dept-tag">前製部</span></span><span class="lb-val gain">+$60,000</span></div>
-        <div class="lb-note">最高 ROI（收益／成本）為 BenQ_ZowieXQ，成本僅 $9,500 即帶來 $40,500 收益，達 426%。</div>
-      </div>
-
-      <div class="lb-col">
-        <div class="lb-col-head"><span>導演組　最賺 Top 5</span><span>收益</span></div>
-        <div class="lb-row"><span class="lb-rank">01</span><span class="lb-name">Innodisk2026<span class="dept-tag">廣告部</span></span><span class="lb-val gain">+$208,375</span></div>
-        <div class="lb-row"><span class="lb-rank">02</span><span class="lb-name">泓德能源_企業影片(綠能未來)<span class="dept-tag">前製部</span></span><span class="lb-val gain">+$153,700</span></div>
-        <div class="lb-row"><span class="lb-rank">03</span><span class="lb-name">RogBrandVideo2026<span class="dept-tag">動畫部</span></span><span class="lb-val gain">+$140,525</span></div>
-        <div class="lb-row"><span class="lb-rank">04</span><span class="lb-name">GiantAnytourXnNewtour<span class="dept-tag">前製部</span></span><span class="lb-val gain">+$112,050</span></div>
-        <div class="lb-row"><span class="lb-rank">05</span><span class="lb-name">Garena新產品PV<span class="dept-tag">動畫部</span></span><span class="lb-val gain">+$100,000</span></div>
-        <div class="lb-note">泓德能源、Innodisk2026 兩案同時是概念組與導演組的共同主力獲利專案。</div>
-      </div>
-
-      <div class="lb-col">
-        <div class="lb-col-head"><span>概念組　待分配預算中成本最高 Top 5</span><span>成本</span></div>
-        <div class="lb-row"><span class="lb-rank">01</span><span class="lb-name">黑潮原創動畫_今日運勢大凶！<span class="dept-tag">前製部・補助案</span></span><span class="lb-val loss">$294,895</span></div>
-        <div class="lb-row"><span class="lb-rank">02</span><span class="lb-name">故宮_LED玉器案<span class="dept-tag">動畫部</span></span><span class="lb-val loss">$216,863</span></div>
-        <div class="lb-row"><span class="lb-rank">03</span><span class="lb-name">PxPay_plus<span class="dept-tag">動畫部</span></span><span class="lb-val loss">$142,919</span></div>
-        <div class="lb-row"><span class="lb-rank">04</span><span class="lb-name">原創動畫節目_反派人力派遣<span class="dept-tag">動畫部・補助案</span></span><span class="lb-val loss">$79,550</span></div>
-        <div class="lb-row"><span class="lb-rank">05</span><span class="lb-name">ROG_20周年顯卡<span class="dept-tag">前製部</span></span><span class="lb-val loss">$70,356</span></div>
-        <div class="lb-note">此處「成本」非虧損，是尚未取得組內預算前的暫記赤字，待分配後可望轉正。</div>
-      </div>
-
-      <div class="lb-col">
-        <div class="lb-col-head"><span>導演組　待分配預算中成本最高 Top 5</span><span>成本</span></div>
-        <div class="lb-row"><span class="lb-rank">01</span><span class="lb-name">黑潮原創動畫_今日運勢大凶！<span class="dept-tag">前製部・補助案</span></span><span class="lb-val loss">$252,000</span></div>
-        <div class="lb-row"><span class="lb-rank">02</span><span class="lb-name">TASA_太空中心簡介影片<span class="dept-tag">廣告部</span></span><span class="lb-val loss">$231,081</span></div>
-        <div class="lb-row"><span class="lb-rank">03</span><span class="lb-name">故宮_LED玉器案<span class="dept-tag">動畫部</span></span><span class="lb-val loss">$153,094</span></div>
-        <div class="lb-row"><span class="lb-rank">04</span><span class="lb-name">星星電力形象影片<span class="dept-tag">前製部・提案中</span></span><span class="lb-val loss">$146,256</span></div>
-        <div class="lb-row"><span class="lb-rank">05</span><span class="lb-name">智崴_IPR_i-Ride飛越極地冰原<span class="dept-tag">視效部</span></span><span class="lb-val loss">$75,075</span></div>
-        <div class="lb-note">⚠ 另有「佛光山寺_淨土洞窟」一案，導演組登記組內預算為 −$378,000（負值），原始表格備註亦標註「寫了怪怪的」，建議請導演組覆核此筆數字後再納入排行。</div>
-      </div>
-
-    </div>
+    <p class="section-desc" id="lb-desc">僅納入已取得組內預算的專案，避免將「待分配」誤判為虧損。</p>
+    <div class="lb-grid" id="lb-grid"></div>
+    <div class="anomaly-box" id="anomaly-box"></div>
   </div>
 
   <!-- STATUS DISTRIBUTION -->
@@ -642,16 +662,7 @@
       <h2>專案狀態分布</h2>
       <span class="section-line"></span>
     </div>
-    <div class="status-pair">
-      <div>
-        <h4>概念組（45 件）</h4>
-        <div class="status-bar" id="status-bar-c"></div>
-      </div>
-      <div>
-        <h4>導演組（52 件）</h4>
-        <div class="status-bar" id="status-bar-d"></div>
-      </div>
-    </div>
+    <div class="status-pair" id="status-pair"></div>
     <div class="status-legend" id="status-legend"></div>
   </div>
 
@@ -659,10 +670,10 @@
   <div class="section">
     <div class="section-head">
       <span class="section-num mono">06</span>
-      <h2>完整專案明細</h2>
+      <h2>完整專案明細（可編輯）</h2>
       <span class="section-line"></span>
     </div>
-    <p class="section-desc">可點擊欄位標題排序，或用下方篩選快速依團隊／部門／分配狀態查看。收益欄位中以斜體灰字顯示者，代表該專案尚未分配組內預算。</p>
+    <p class="section-desc">點擊欄位標題排序。數字欄位可直接輸入，「組內預算」留空＝尚未分配。修改後按 Tab 或點別處即會更新上方所有統計。</p>
 
     <div class="filter-row">
       <span class="chip active" data-filter-team="all">全部團隊</span>
@@ -688,10 +699,14 @@
             <th data-key="cost" style="text-align:right">成本<span class="arrow">▾</span></th>
             <th data-key="group_budget" style="text-align:right">組內預算<span class="arrow">▾</span></th>
             <th data-key="profit" style="text-align:right">收益／暫計<span class="arrow">▾</span></th>
+            <th style="width:34px"></th>
           </tr>
         </thead>
         <tbody id="table-body"></tbody>
       </table>
+      <div class="add-row-bar">
+        <span class="add-row-btn" id="btn-add-row">＋ 新增專案</span>
+      </div>
       <div class="table-foot">
         <span id="table-count-foot">顯示 0 / 0 筆</span>
         <span>金額單位：新台幣元</span>
@@ -702,42 +717,248 @@
   <!-- FOOTER -->
   <div class="footer">
     <div class="notes">
-      <b>資料說明：</b>本表整理自「2026-專案總表」導演組（52 筆）與概念組（45 筆）兩份 Notion 匯出檔。同一專案在兩份表中可能拆分為多筆（如依任務細項或月份分次登記），故合併去重後共 71 件獨立專案。33 件專案尚無客戶總預算登記，61 件專案尚無組內預算分配紀錄，相關金額多在備註欄標示「還沒分」。部分專案部門欄位空白或標記不一致，已歸入各統計區塊的對應分類，建議定期回填以提升後續分析準確度。
+      <b>資料說明：</b>本表整理自「2026-專案總表」導演組與概念組兩份 Notion 匯出檔，合併去重後共 71 件獨立專案起始資料。此頁已開啟編輯模式：所有欄位皆可直接修改、新增或刪除，所有統計區塊會即時重新計算。由於本頁為單機 HTML 檔案、未連接任何資料庫，<b>編輯內容不會自動保存</b>，請使用上方「匯出 JSON」按鈕下載目前資料備份，下次開啟本頁後可用「匯入 JSON」還原進度。
     </div>
     <div class="notes" style="text-align:right;min-width:160px;">
-      <b>製表</b><br>2026.06 整理
+      <b>製表</b><br>2026.06 整理・編輯版
     </div>
   </div>
 
 </div>
 
 <script>
-const RECORDS = [{"team": "概念組", "name": "P3230 - 泓德能源_企業影片(綠能未來)", "code": "P3230", "status": "結案", "dept": "前製部", "person": "🎨婕㚬, 🎨芝翊", "project_budget": 2415000.0, "cost": 184138.0, "group_budget": 270000.0, "profit": 85862.0, "allocated": true, "month": "1月"}, {"team": "概念組", "name": "P3230 - 泓德能源_企業影片(綠寶日記本)", "code": "P3230", "status": "結案", "dept": "前製部", "person": "🎨家綺, 🎨硯棋", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "1月, 2月, 3月, 4月"}, {"team": "概念組", "name": "P3285 - 遊戲橘子_楓之谷_蓮&曉之陣動畫PV", "code": "P3285", "status": "結案", "dept": "前製部", "person": "🎨婕㚬, 🎨語桐", "project_budget": 424200.0, "cost": 41031.0, "group_budget": 163600.0, "profit": 122569.0, "allocated": true, "month": "1月"}, {"team": "概念組", "name": "P3378 - 薛之謙_萬獸之王演唱會(2D 偽Rollcard)", "code": "P3378", "status": "已完成", "dept": "前製部", "person": "🎨婕㚬, 🎨語桐", "project_budget": 2851000.0, "cost": 302931.0, "group_budget": 700000.0, "profit": 397069.0, "allocated": true, "month": "1月"}, {"team": "概念組", "name": "P3378 - 薛之謙_萬獸之王演唱會(3D 躍)", "code": "P3378", "status": "結案", "dept": "前製部", "person": "🎨硯棋, 🎨芝翊", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "1月"}, {"team": "概念組", "name": "P3413 - ROGEqualizerVideo", "code": "P3413", "status": "暫停", "dept": "前製部", "person": "🎨芝翊", "project_budget": 790500.0, "cost": 20000.0, "group_budget": 80000.0, "profit": 60000.0, "allocated": true, "month": "1月, 2月, 3月, 4月, 5月, 6月"}, {"team": "概念組", "name": "P3387 - Taiwantradeshows2026", "code": "P3387", "status": "結案", "dept": "前製部", "person": "🎨婕㚬, 🎨芝翊", "project_budget": 380000.0, "cost": 11400.0, "group_budget": 30000.0, "profit": 18600.0, "allocated": true, "month": "2月"}, {"team": "概念組", "name": "未開 - 國父紀念館投影案", "code": null, "status": "暫停", "dept": "前製部", "person": "🎨士堯, 🎨苡安, 🎨語桐", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "10月, 11月, 12月, 4月"}, {"team": "概念組", "name": "P2585 - 黑潮原創動畫-今日運勢大凶！", "code": "P2585", "status": "結案", "dept": "前製部", "person": "🎨婕㚬, 🎨家綺", "project_budget": null, "cost": 294895.0, "group_budget": null, "profit": -294895.0, "allocated": false, "month": "4月"}, {"team": "概念組", "name": "P3464 - ROG_20周年顯卡", "code": "P3464", "status": "進行中", "dept": "前製部", "person": "🎨士堯, 🎨婕㚬", "project_budget": null, "cost": 70356.0, "group_budget": null, "profit": -70356.0, "allocated": false, "month": "4月, 5月, 6月"}, {"team": "概念組", "name": "P3503 - BenQ_ZowieXQ", "code": "P3503", "status": "已完成", "dept": "前製部", "person": "🎨芝翊", "project_budget": 380000.0, "cost": 9500.0, "group_budget": 50000.0, "profit": 40500.0, "allocated": true, "month": "4月"}, {"team": "概念組", "name": "P3516 - RogT1聯名顯卡", "code": "P3516", "status": "進行中", "dept": "前製部", "person": "🎨士堯, 🎨芝翊", "project_budget": null, "cost": 33600.0, "group_budget": null, "profit": -33600.0, "allocated": false, "month": "5月, 6月"}, {"team": "概念組", "name": "P3548 - MsiMLG_魔龍姬KV設計", "code": "P3548", "status": "已完成", "dept": "前製部", "person": "🎨士堯, 🎨婕㚬, 🎨語桐", "project_budget": 100000.0, "cost": 80438.0, "group_budget": 90000.0, "profit": 9562.0, "allocated": true, "month": "5月, 6月"}, {"team": "概念組", "name": "P3551 - 許富凱一五一拾演場會VCR", "code": "P3551", "status": "進行中", "dept": "前製部", "person": "🎨苡安, 🎨語桐", "project_budget": 40000.0, "cost": 46313.0, "group_budget": 36000.0, "profit": -10313.0, "allocated": true, "month": "5月, 6月, 7月"}, {"team": "概念組", "name": "Positive 起死回生之路。", "code": null, "status": "暫停", "dept": "前製部", "person": "🎨芝翊", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "5月, 6月"}, {"team": "概念組", "name": "奇談島航_行銷宣傳片", "code": null, "status": "提案中", "dept": "前製部", "person": "🎨語桐", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "6月, 7月"}, {"team": "概念組", "name": "P3577 - 高鐵_裸視3D", "code": "P3577", "status": "掰掰", "dept": "前製部", "person": "🎨士堯, 🎨芝翊", "project_budget": null, "cost": 39000.0, "group_budget": null, "profit": -39000.0, "allocated": false, "month": "6月, 7月"}, {"team": "概念組", "name": "P3579 - 喜陽_台灣高鐵平面圖製作", "code": "P3579", "status": "進行中", "dept": "前製部", "person": "🎨語桐", "project_budget": 105000.0, "cost": 16425.0, "group_budget": null, "profit": -16425.0, "allocated": false, "month": "6月"}, {"team": "概念組", "name": "P3489 - 前製部_小原創計畫", "code": "P3489", "status": "進行中", "dept": "前製部", "person": "🎨語桐", "project_budget": null, "cost": 25513.0, "group_budget": null, "profit": -25513.0, "allocated": false, "month": null}, {"team": "概念組", "name": "P3058 - Delta_IntroductionVideo", "code": "P3058", "status": "已完成", "dept": "廣告部", "person": "🎨語桐", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "1月"}, {"team": "概念組", "name": "P3073 - 中台木雕博物館穹頂投影案", "code": "P3073", "status": "已完成", "dept": "廣告部", "person": "🎨語桐", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "1月"}, {"team": "概念組", "name": "P3084 - MSI_Prestige1416Flip", "code": "P3084", "status": "已完成", "dept": "廣告部", "person": "🎨婕㚬, 🎨芝翊, 🎨語桐", "project_budget": 1495241.0, "cost": 27613.0, "group_budget": 12336.0, "profit": -15277.0, "allocated": true, "month": "1月"}, {"team": "概念組", "name": "P3255 - TASA_太空中心簡介影片", "code": "P3255", "status": "進行中", "dept": "廣告部", "person": "🎨芝翊", "project_budget": 2478000.0, "cost": 47631.0, "group_budget": null, "profit": -47631.0, "allocated": false, "month": "1月, 2月, 3月, 4月, 5月, 6月"}, {"team": "概念組", "name": "P3307 - Msi_Cyborg15A15MAX", "code": "P3307", "status": "結案", "dept": "廣告部", "person": "🎨芝翊", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "1月"}, {"team": "概念組", "name": "P3322-Aoc_Agp277kx", "code": "P3322", "status": "已完成", "dept": "廣告部", "person": "🎨語桐", "project_budget": 476190.0, "cost": 18706.0, "group_budget": 15000.0, "profit": -3706.0, "allocated": true, "month": "1月"}, {"team": "概念組", "name": "P3325 - 放學後的Merodi", "code": "P3325", "status": "已完成", "dept": "廣告部", "person": "🎨婕㚬", "project_budget": 4320034.0, "cost": 8750.0, "group_budget": 40000.0, "profit": 31250.0, "allocated": true, "month": "1月"}, {"team": "概念組", "name": "P3363 - Acer_Predator2026EsportsVideo", "code": "P3363", "status": "掰掰", "dept": "廣告部", "person": "🎨語桐", "project_budget": null, "cost": 5019.0, "group_budget": null, "profit": -5019.0, "allocated": false, "month": "1月"}, {"team": "概念組", "name": "P3395 - Msi_TitanDragonEdition", "code": "P3395", "status": "結案", "dept": "廣告部", "person": "🎨婕㚬, 🎨硯棋, 🎨芝翊, 🎨語桐", "project_budget": 1050000.0, "cost": 116506.0, "group_budget": 70000.0, "profit": -46506.0, "allocated": true, "month": "1月, 2月, 3月, 4月, 5月, 6月"}, {"team": "概念組", "name": "P3239 - 鳩摩羅什_片頭尾製作", "code": "P3239", "status": "已完成", "dept": "廣告部", "person": "🎨家綺, 🎨語桐", "project_budget": 333333.0, "cost": 78431.0, "group_budget": 8200.0, "profit": -70231.0, "allocated": true, "month": "3月"}, {"team": "概念組", "name": "P3374 - QUM_Chap.3", "code": "P3374", "status": "已完成", "dept": "廣告部", "person": "🎨芝翊", "project_budget": null, "cost": 20000.0, "group_budget": 50000.0, "profit": 30000.0, "allocated": true, "month": "3月"}, {"team": "概念組", "name": "P3414 - 男公館_片頭製作", "code": "P3414", "status": "結案", "dept": "廣告部", "person": "🎨芝翊", "project_budget": 52500.0, "cost": 35600.0, "group_budget": 5000.0, "profit": -30600.0, "allocated": true, "month": "3月"}, {"team": "概念組", "name": "P3441 - Innodisk2026", "code": "P3441", "status": "已完成", "dept": "廣告部", "person": "🎨婕㚬, 🎨芝翊", "project_budget": 1850000.0, "cost": 46150.0, "group_budget": 175000.0, "profit": 128850.0, "allocated": true, "month": "3月, 4月, 5月, 6月"}, {"team": "概念組", "name": "P3478 - Rog_20thAnniversaryLineup", "code": "P3478", "status": "飛奧", "dept": "廣告部", "person": "🎨士堯, 🎨婕㚬, 🎨家綺, 🎨芝翊", "project_budget": 4332258.0, "cost": 136856.0, "group_budget": 130000.0, "profit": -6856.0, "allocated": true, "month": "5月"}, {"team": "概念組", "name": "P3023 - 糖果星球節目動畫製作", "code": "P3023", "status": "已完成", "dept": "動畫部", "person": "🎨語桐", "project_budget": null, "cost": 10038.0, "group_budget": null, "profit": -10038.0, "allocated": false, "month": "1月"}, {"team": "概念組", "name": "P3135 - RogBrandVideo2026", "code": "P3135", "status": "結案", "dept": "動畫部", "person": "🎨家綺, 🎨語桐", "project_budget": 4713202.0, "cost": 407456.0, "group_budget": 400000.0, "profit": -7456.0, "allocated": true, "month": "1月, 2月, 3月, 4月, 5月, 6月"}, {"team": "概念組", "name": "P3139 - 佛光山寺「淨土洞窟」-淨土莊嚴廣袤 90秒 多媒體投影製作", "code": "P3139", "status": "飛奧", "dept": "動畫部", "person": "🎨語桐", "project_budget": null, "cost": 27471.0, "group_budget": 27471.0, "profit": 0.0, "allocated": true, "month": "1月, 2月, 3月, 4月"}, {"team": "概念組", "name": "P3271 - 新光保全形象影片", "code": "P3271", "status": "結案", "dept": "動畫部", "person": "🎨芝翊", "project_budget": 2640000.0, "cost": 186919.0, "group_budget": 205200.0, "profit": 18281.0, "allocated": true, "month": "1月, 2月, 3月"}, {"team": "概念組", "name": "P3427 - 地球館-CP4", "code": "P3427", "status": "進行中", "dept": "動畫部", "person": "🎨語桐", "project_budget": 6500000.0, "cost": 62125.0, "group_budget": 42886.0, "profit": -19239.0, "allocated": true, "month": "3月, 4月, 5月, 6月, 7月, 8月"}, {"team": "概念組", "name": "P3074 - 故宮_LED玉器案 (動畫部)", "code": "P3074", "status": "進行中", "dept": "動畫部", "person": "🎨婕㚬, 🎨芝翊, 🎨苡安, 🎨語桐", "project_budget": 2520000.0, "cost": 216863.0, "group_budget": null, "profit": -216863.0, "allocated": false, "month": "4月, 5月, 7月, 8月, 9月"}, {"team": "概念組", "name": "P3449 - PxPay_plus", "code": "P3449", "status": "已完成", "dept": "動畫部", "person": "🎨士堯, 🎨苡安, 🎨語桐", "project_budget": 1733000.0, "cost": 142919.0, "group_budget": null, "profit": -142919.0, "allocated": false, "month": "4月, 5月"}, {"team": "概念組", "name": "P3161 - 原創動畫節目：反派人力派遣影集製作", "code": "P3161", "status": "暫停", "dept": "動畫部", "person": "🎨家綺", "project_budget": 9600000.0, "cost": 79550.0, "group_budget": null, "profit": -79550.0, "allocated": false, "month": "5月"}, {"team": "概念組", "name": "P3462 - PorcelainMG", "code": "P3462", "status": "已完成", "dept": "動畫部", "person": "🎨芝翊, 🎨苡安", "project_budget": 465000.0, "cost": 47656.0, "group_budget": null, "profit": -47656.0, "allocated": false, "month": "5月"}, {"team": "概念組", "name": "P2893 - 犢影_黑白清道夫", "code": "P2893", "status": "已完成", "dept": "視效部", "person": "🎨婕㚬", "project_budget": null, "cost": 30750.0, "group_budget": null, "profit": -30750.0, "allocated": false, "month": "5月"}, {"team": "概念組", "name": "P3500 - Acer_PredatorLeague7", "code": "P3500", "status": "進行中", "dept": "視效部", "person": "🎨婕㚬, 🎨家綺, 🎨芝翊, 🎨語桐", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "5月, 6月, 7月, 8月"}, {"team": "概念組", "name": "P3457 - 國運之戰", "code": "P3457", "status": "已完成", "dept": "視效部", "person": "🎨士堯", "project_budget": null, "cost": 2375.0, "group_budget": null, "profit": -2375.0, "allocated": false, "month": null}, {"team": "導演組", "name": "P3230 - 泓德能源_企業影片(綠能未來)", "code": "P3230", "status": "結案", "dept": "前製部", "person": "🎬柏安", "project_budget": 2415000.0, "cost": 126300.0, "group_budget": 280000.0, "profit": 153700.0, "allocated": true, "month": "1月"}, {"team": "導演組", "name": "P3230 - 泓德能源_企業影片(綠寶日記本)", "code": "P3230", "status": "結案", "dept": "前製部", "person": "🎬劭謙", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "1月, 2月, 3月, 4月"}, {"team": "導演組", "name": "P3285 - 遊戲橘子_楓之谷_蓮&曉之陣動畫PV", "code": "P3285", "status": "結案", "dept": "前製部", "person": "🎬劭謙", "project_budget": 424200.0, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "1月"}, {"team": "導演組", "name": "P3333 - 202512_GiantAnytourXnNewtour", "code": "P3333", "status": "結案", "dept": "前製部", "person": "🎬阿晃", "project_budget": 345000.0, "cost": 37950.0, "group_budget": 150000.0, "profit": 112050.0, "allocated": true, "month": "1月, 2月"}, {"team": "導演組", "name": "P3378 - 薛之謙_萬獸之王演唱會(3D 躍)", "code": "P3378", "status": "結案", "dept": "前製部", "person": "🎬阿晃", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "1月"}, {"team": "導演組", "name": "P3413 - ROGEqualizerVideo", "code": "P3413", "status": "暫停", "dept": "前製部", "person": "🎬小高", "project_budget": 790500.0, "cost": 26625.0, "group_budget": 100000.0, "profit": 73375.0, "allocated": true, "month": "1月, 2月, 3月, 4月, 5月, 6月"}, {"team": "導演組", "name": "P3058 - Delta_IntroductionVideo", "code": "P3058", "status": "已完成", "dept": "廣告部", "person": "🎬阿晃", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "1月"}, {"team": "導演組", "name": "P3183 - Msi_RaiderA16HX16HXMAX", "code": "P3183", "status": "結案", "dept": "廣告部", "person": "🎬柏安", "project_budget": 1221150.0, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "1月, 2月"}, {"team": "導演組", "name": "P3255 - TASA_太空中心簡介影片", "code": "P3255", "status": "進行中", "dept": "廣告部", "person": "🎬阿晃", "project_budget": 2478000.0, "cost": 231081.0, "group_budget": null, "profit": -231081.0, "allocated": false, "month": "1月, 2月, 3月, 4月, 5月, 6月"}, {"team": "導演組", "name": "P3363 - Acer_Predator2026EsportsVideo", "code": "P3363", "status": "掰掰", "dept": "廣告部", "person": "🎬阿晃", "project_budget": null, "cost": 26737.0, "group_budget": null, "profit": -26737.0, "allocated": false, "month": "1月"}, {"team": "導演組", "name": "P3395 - Msi_TitanDragonEdition", "code": "P3395", "status": "結案", "dept": "廣告部", "person": "🎬劭謙", "project_budget": 1050000.0, "cost": null, "group_budget": 80000.0, "profit": 80000.0, "allocated": true, "month": "1月, 2月, 3月, 4月, 5月, 6月"}, {"team": "導演組", "name": "P3411 - TAITRA_2026ComputxUnbound", "code": "P3411", "status": "掰掰", "dept": "廣告部", "person": "🎬阿晃", "project_budget": 95238.0, "cost": 29425.0, "group_budget": 85714.0, "profit": 56289.0, "allocated": true, "month": "1月, 2月"}, {"team": "導演組", "name": "P3135 - RogBrandVideo2026", "code": "P3135", "status": "結案", "dept": "動畫部", "person": "🎬劭謙", "project_budget": 4713202.0, "cost": 59475.0, "group_budget": 200000.0, "profit": 140525.0, "allocated": true, "month": "1月, 2月, 3月, 4月, 5月, 6月"}, {"team": "導演組", "name": "P3139 - 佛光山寺「淨土洞窟」-淨土莊嚴廣袤 90秒 多媒體投影製作", "code": "P3139", "status": "飛奧", "dept": "動畫部", "person": "🎬柏安", "project_budget": null, "cost": 27750.0, "group_budget": -378000.0, "profit": -405750.0, "allocated": true, "month": "1月, 2月, 3月, 4月"}, {"team": "導演組", "name": "P3271 - 新光保全形象影片", "code": "P3271", "status": "結案", "dept": "動畫部", "person": "🎬阿晃", "project_budget": 2640000.0, "cost": 151913.0, "group_budget": 155000.0, "profit": 3087.0, "allocated": true, "month": "1月, 2月, 3月"}, {"team": "導演組", "name": "P3387 - Taiwantradeshows2026", "code": "P3387", "status": "結案", "dept": "前製部", "person": "🎬柏安", "project_budget": 380000.0, "cost": 9000.0, "group_budget": 100000.0, "profit": 91000.0, "allocated": true, "month": "2月"}, {"team": "導演組", "name": "P3422 - Garena新產品PV", "code": "P3422", "status": "進行中", "dept": "動畫部", "person": "🎬劭謙", "project_budget": 1898340.0, "cost": null, "group_budget": 100000.0, "profit": 100000.0, "allocated": true, "month": "2月, 3月, 4月, 5月, 6月"}, {"team": "導演組", "name": "P3331 - Montech_BrandVideo", "code": "P3331", "status": "掰掰", "dept": "廣告部", "person": "🎬劭謙", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "3月"}, {"team": "導演組", "name": "P3441 - Innodisk2026", "code": "P3441", "status": "已完成", "dept": "廣告部", "person": "🎬小高", "project_budget": 1850000.0, "cost": 141625.0, "group_budget": 350000.0, "profit": 208375.0, "allocated": true, "month": "3月, 4月, 5月, 6月"}, {"team": "導演組", "name": "P3446 - Msi_MegSeries", "code": "P3446", "status": "已完成", "dept": "廣告部", "person": "🎬阿晃", "project_budget": 1200000.0, "cost": 68437.0, "group_budget": null, "profit": -68437.0, "allocated": false, "month": "3月, 4月, 5月"}, {"team": "導演組", "name": "P3447 - Msi_Maestro900R", "code": "P3447", "status": "已完成", "dept": "廣告部", "person": "🎬阿晃", "project_budget": 795000.0, "cost": 26006.0, "group_budget": null, "profit": -26006.0, "allocated": false, "month": "3月, 4月, 5月"}, {"team": "導演組", "name": "P3448 - Msi_CoreliquidE15", "code": "P3448", "status": "已完成", "dept": "廣告部", "person": "🎬阿晃", "project_budget": 755000.0, "cost": 26919.0, "group_budget": null, "profit": -26919.0, "allocated": false, "month": "3月, 4月, 5月"}, {"team": "導演組", "name": "P3475 - Acer_2026TravelMateP614AI", "code": "P3475", "status": "已完成", "dept": "廣告部", "person": "🎬小高", "project_budget": 703500.0, "cost": 0.0, "group_budget": 20000.0, "profit": 20000.0, "allocated": true, "month": "3月, 4月, 5月"}, {"team": "導演組", "name": "P3427 - 地球館-CP4", "code": "P3427", "status": "進行中", "dept": "動畫部", "person": "🎬阿晃", "project_budget": 6500000.0, "cost": 121794.0, "group_budget": 83468.0, "profit": -38326.0, "allocated": true, "month": "3月, 4月, 5月, 6月, 7月, 8月"}, {"team": "導演組", "name": "P3438 - 2026 OPENDAY (MCC)", "code": "P3438", "status": "結案", "dept": "其他", "person": "🎬劭謙, 🎬小高", "project_budget": null, "cost": 21000.0, "group_budget": null, "profit": -21000.0, "allocated": false, "month": "3月, 4月"}, {"team": "導演組", "name": "未開 - 國父紀念館投影案", "code": null, "status": "暫停", "dept": "前製部", "person": "🎬小高", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "10月, 11月, 12月, 4月"}, {"team": "導演組", "name": "P2585 - 黑潮原創動畫-今日運勢大凶！", "code": "P2585", "status": "結案", "dept": "前製部", "person": "🎬柏安", "project_budget": null, "cost": 252000.0, "group_budget": null, "profit": -252000.0, "allocated": false, "month": "4月"}, {"team": "導演組", "name": "P3464 - ROG_20周年顯卡", "code": "P3464", "status": "進行中", "dept": "前製部", "person": "🎬小高", "project_budget": null, "cost": 42500.0, "group_budget": null, "profit": -42500.0, "allocated": false, "month": "4月, 5月, 6月"}, {"team": "導演組", "name": "P3466 - ROG_GC701 PC Controll", "code": "P3466", "status": "進行中", "dept": "廣告部", "person": "🎬劭謙", "project_budget": 949830.0, "cost": null, "group_budget": 80000.0, "profit": 80000.0, "allocated": true, "month": "4月, 5月, 6月, 7月"}, {"team": "導演組", "name": "P3074 - 故宮_LED玉器案 (動畫部)", "code": "P3074", "status": "進行中", "dept": "動畫部", "person": "🎬阿晃", "project_budget": 2520000.0, "cost": 153094.0, "group_budget": null, "profit": -153094.0, "allocated": false, "month": "4月, 5月, 7月, 8月, 9月"}, {"team": "導演組", "name": "P3326 - 智崴_IPR_i-Ride_飛越極地冰原_動畫製作", "code": "P3326", "status": "暫停", "dept": "視效部", "person": "🎬劭謙", "project_budget": 5000000.0, "cost": 75075.0, "group_budget": null, "profit": -75075.0, "allocated": false, "month": "4月"}, {"team": "導演組", "name": "P3509 - 瀚草工具討論", "code": "P3509", "status": "暫停", "dept": "其他", "person": "🎬小高", "project_budget": null, "cost": 6750.0, "group_budget": null, "profit": -6750.0, "allocated": false, "month": "4月, 5月"}, {"team": "導演組", "name": "作品集剪輯", "code": null, "status": "已完成", "dept": "前製部", "person": "🎬議文", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "5月"}, {"team": "導演組", "name": "P3516 - RogT1聯名顯卡", "code": "P3516", "status": "進行中", "dept": "前製部", "person": "🎬阿晃", "project_budget": null, "cost": 44256.0, "group_budget": null, "profit": -44256.0, "allocated": false, "month": "5月, 6月"}, {"team": "導演組", "name": "P3517 - 星星電力形象影片", "code": "P3517", "status": "提案中", "dept": "前製部", "person": "🎬議文, 🎬阿晃", "project_budget": 1500000.0, "cost": 146256.0, "group_budget": null, "profit": -146256.0, "allocated": false, "month": "5月, 6月"}, {"team": "導演組", "name": "Positive 起死回生之路。", "code": null, "status": "暫停", "dept": "前製部", "person": "🎬小高", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "5月, 6月"}, {"team": "導演組", "name": "P3478 - Rog_20thAnniversaryLineup", "code": "P3478", "status": "飛奧", "dept": "廣告部", "person": "🎬劭謙", "project_budget": 4332258.0, "cost": null, "group_budget": 60000.0, "profit": 60000.0, "allocated": true, "month": "5月"}, {"team": "導演組", "name": "P3501 - ROG_New ROG Xbox Ally", "code": "P3501", "status": "已完成", "dept": "廣告部", "person": "🎬小高", "project_budget": 1628151.0, "cost": 34625.0, "group_budget": null, "profit": -34625.0, "allocated": false, "month": "5月, 6月"}, {"team": "導演組", "name": "桃園鐵道_沉浸劇場動畫", "code": null, "status": "掰掰", "dept": "動畫部", "person": "🎬議文", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "5月"}, {"team": "導演組", "name": "P3161 - 原創動畫節目：反派人力派遣影集製作", "code": "P3161", "status": "暫停", "dept": "動畫部", "person": "🎬柏安", "project_budget": 9600000.0, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "5月"}, {"team": "導演組", "name": "P3500 - Acer_PredatorLeague7", "code": "P3500", "status": "進行中", "dept": "視效部", "person": "🎬劭謙", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "5月, 6月, 7月, 8月"}, {"team": "導演組", "name": "大凶幕後剪輯", "code": null, "status": "已完成", "dept": null, "person": "🎬議文", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "5月"}, {"team": "導演組", "name": "大凶花絮剪輯", "code": null, "status": "飛奧", "dept": "前製部", "person": "🎬劭謙, 🎬議文", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "6月"}, {"team": "導演組", "name": "奇談島航_行銷宣傳片", "code": null, "status": "提案中", "dept": "前製部", "person": "🎬劭謙", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "6月, 7月"}, {"team": "導演組", "name": "P3572 - MsiVenture15", "code": "P3572", "status": "提案中", "dept": "前製部", "person": "🎬小高", "project_budget": 800000.0, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "6月, 7月"}, {"team": "導演組", "name": "P3577 - 高鐵_裸視3D", "code": "P3577", "status": "掰掰", "dept": "前製部", "person": "🎬阿晃", "project_budget": null, "cost": 8669.0, "group_budget": null, "profit": -8669.0, "allocated": false, "month": "6月, 7月"}, {"team": "導演組", "name": "P3583 - RogThorPsuEdition20", "code": "P3583", "status": "進行中", "dept": "前製部", "person": "🎬劭謙", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "6月, 7月"}, {"team": "導演組", "name": "P3590 - BenQEWsreiesVideo", "code": "P3590", "status": "進行中", "dept": "前製部", "person": "🎬議文", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "6月, 7月"}, {"team": "導演組", "name": "世芯電子", "code": null, "status": "未開始", "dept": "廣告部", "person": "🎬阿晃", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "6月, 7月, 8月"}, {"team": "導演組", "name": "P3595 - ROG_Holiday Campaign", "code": "P3595", "status": "未開始", "dept": "廣告部", "person": "🎬劭謙", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "6月, 7月, 8月"}, {"team": "導演組", "name": "高雄電影短片補助", "code": null, "status": "進行中", "dept": null, "person": "🎬小高", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "6月"}, {"team": "導演組", "name": "P3263 - 屏東海生館 rov影片製作", "code": "P3263", "status": "暫停", "dept": "動畫部", "person": "🎬阿晃", "project_budget": null, "cost": 41831.0, "group_budget": null, "profit": -41831.0, "allocated": false, "month": null}]
+/* ====================== DATA ====================== */
+const INITIAL_RECORDS = [{"team": "概念組", "name": "P3230 - 泓德能源_企業影片(綠能未來)", "code": "P3230", "status": "結案", "dept": "前製部", "person": "🎨婕㚬, 🎨芝翊", "project_budget": 2415000.0, "cost": 184138.0, "group_budget": 270000.0, "profit": 85862.0, "allocated": true, "month": "1月"}, {"team": "概念組", "name": "P3230 - 泓德能源_企業影片(綠寶日記本)", "code": "P3230", "status": "結案", "dept": "前製部", "person": "🎨家綺, 🎨硯棋", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "1月, 2月, 3月, 4月"}, {"team": "概念組", "name": "P3285 - 遊戲橘子_楓之谷_蓮&曉之陣動畫PV", "code": "P3285", "status": "結案", "dept": "前製部", "person": "🎨婕㚬, 🎨語桐", "project_budget": 424200.0, "cost": 41031.0, "group_budget": 163600.0, "profit": 122569.0, "allocated": true, "month": "1月"}, {"team": "概念組", "name": "P3378 - 薛之謙_萬獸之王演唱會(2D 偽Rollcard)", "code": "P3378", "status": "已完成", "dept": "前製部", "person": "🎨婕㚬, 🎨語桐", "project_budget": 2851000.0, "cost": 302931.0, "group_budget": 700000.0, "profit": 397069.0, "allocated": true, "month": "1月"}, {"team": "概念組", "name": "P3378 - 薛之謙_萬獸之王演唱會(3D 躍)", "code": "P3378", "status": "結案", "dept": "前製部", "person": "🎨硯棋, 🎨芝翊", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "1月"}, {"team": "概念組", "name": "P3413 - ROGEqualizerVideo", "code": "P3413", "status": "暫停", "dept": "前製部", "person": "🎨芝翊", "project_budget": 790500.0, "cost": 20000.0, "group_budget": 80000.0, "profit": 60000.0, "allocated": true, "month": "1月, 2月, 3月, 4月, 5月, 6月"}, {"team": "概念組", "name": "P3387 - Taiwantradeshows2026", "code": "P3387", "status": "結案", "dept": "前製部", "person": "🎨婕㚬, 🎨芝翊", "project_budget": 380000.0, "cost": 11400.0, "group_budget": 30000.0, "profit": 18600.0, "allocated": true, "month": "2月"}, {"team": "概念組", "name": "未開 - 國父紀念館投影案", "code": null, "status": "暫停", "dept": "前製部", "person": "🎨士堯, 🎨苡安, 🎨語桐", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "10月, 11月, 12月, 4月"}, {"team": "概念組", "name": "P2585 - 黑潮原創動畫-今日運勢大凶！", "code": "P2585", "status": "結案", "dept": "前製部", "person": "🎨婕㚬, 🎨家綺", "project_budget": null, "cost": 294895.0, "group_budget": null, "profit": -294895.0, "allocated": false, "month": "4月"}, {"team": "概念組", "name": "P3464 - ROG_20周年顯卡", "code": "P3464", "status": "進行中", "dept": "前製部", "person": "🎨士堯, 🎨婕㚬", "project_budget": null, "cost": 70356.0, "group_budget": null, "profit": -70356.0, "allocated": false, "month": "4月, 5月, 6月"}, {"team": "概念組", "name": "P3503 - BenQ_ZowieXQ", "code": "P3503", "status": "已完成", "dept": "前製部", "person": "🎨芝翊", "project_budget": 380000.0, "cost": 9500.0, "group_budget": 50000.0, "profit": 40500.0, "allocated": true, "month": "4月"}, {"team": "概念組", "name": "P3516 - RogT1聯名顯卡", "code": "P3516", "status": "進行中", "dept": "前製部", "person": "🎨士堯, 🎨芝翊", "project_budget": null, "cost": 33600.0, "group_budget": null, "profit": -33600.0, "allocated": false, "month": "5月, 6月"}, {"team": "概念組", "name": "P3548 - MsiMLG_魔龍姬KV設計", "code": "P3548", "status": "已完成", "dept": "前製部", "person": "🎨士堯, 🎨婕㚬, 🎨語桐", "project_budget": 100000.0, "cost": 80438.0, "group_budget": 90000.0, "profit": 9562.0, "allocated": true, "month": "5月, 6月"}, {"team": "概念組", "name": "P3551 - 許富凱一五一拾演場會VCR", "code": "P3551", "status": "進行中", "dept": "前製部", "person": "🎨苡安, 🎨語桐", "project_budget": 40000.0, "cost": 46313.0, "group_budget": 36000.0, "profit": -10313.0, "allocated": true, "month": "5月, 6月, 7月"}, {"team": "概念組", "name": "Positive 起死回生之路。", "code": null, "status": "暫停", "dept": "前製部", "person": "🎨芝翊", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "5月, 6月"}, {"team": "概念組", "name": "奇談島航_行銷宣傳片", "code": null, "status": "提案中", "dept": "前製部", "person": "🎨語桐", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "6月, 7月"}, {"team": "概念組", "name": "P3577 - 高鐵_裸視3D", "code": "P3577", "status": "掰掰", "dept": "前製部", "person": "🎨士堯, 🎨芝翊", "project_budget": null, "cost": 39000.0, "group_budget": null, "profit": -39000.0, "allocated": false, "month": "6月, 7月"}, {"team": "概念組", "name": "P3579 - 喜陽_台灣高鐵平面圖製作", "code": "P3579", "status": "進行中", "dept": "前製部", "person": "🎨語桐", "project_budget": 105000.0, "cost": 16425.0, "group_budget": null, "profit": -16425.0, "allocated": false, "month": "6月"}, {"team": "概念組", "name": "P3489 - 前製部_小原創計畫", "code": "P3489", "status": "進行中", "dept": "前製部", "person": "🎨語桐", "project_budget": null, "cost": 25513.0, "group_budget": null, "profit": -25513.0, "allocated": false, "month": null}, {"team": "概念組", "name": "P3058 - Delta_IntroductionVideo", "code": "P3058", "status": "已完成", "dept": "廣告部", "person": "🎨語桐", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "1月"}, {"team": "概念組", "name": "P3073 - 中台木雕博物館穹頂投影案", "code": "P3073", "status": "已完成", "dept": "廣告部", "person": "🎨語桐", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "1月"}, {"team": "概念組", "name": "P3084 - MSI_Prestige1416Flip", "code": "P3084", "status": "已完成", "dept": "廣告部", "person": "🎨婕㚬, 🎨芝翊, 🎨語桐", "project_budget": 1495241.0, "cost": 27613.0, "group_budget": 12336.0, "profit": -15277.0, "allocated": true, "month": "1月"}, {"team": "概念組", "name": "P3255 - TASA_太空中心簡介影片", "code": "P3255", "status": "進行中", "dept": "廣告部", "person": "🎨芝翊", "project_budget": 2478000.0, "cost": 47631.0, "group_budget": null, "profit": -47631.0, "allocated": false, "month": "1月, 2月, 3月, 4月, 5月, 6月"}, {"team": "概念組", "name": "P3307 - Msi_Cyborg15A15MAX", "code": "P3307", "status": "結案", "dept": "廣告部", "person": "🎨芝翊", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "1月"}, {"team": "概念組", "name": "P3322-Aoc_Agp277kx", "code": "P3322", "status": "已完成", "dept": "廣告部", "person": "🎨語桐", "project_budget": 476190.0, "cost": 18706.0, "group_budget": 15000.0, "profit": -3706.0, "allocated": true, "month": "1月"}, {"team": "概念組", "name": "P3325 - 放學後的Merodi", "code": "P3325", "status": "已完成", "dept": "廣告部", "person": "🎨婕㚬", "project_budget": 4320034.0, "cost": 8750.0, "group_budget": 40000.0, "profit": 31250.0, "allocated": true, "month": "1月"}, {"team": "概念組", "name": "P3363 - Acer_Predator2026EsportsVideo", "code": "P3363", "status": "掰掰", "dept": "廣告部", "person": "🎨語桐", "project_budget": null, "cost": 5019.0, "group_budget": null, "profit": -5019.0, "allocated": false, "month": "1月"}, {"team": "概念組", "name": "P3395 - Msi_TitanDragonEdition", "code": "P3395", "status": "結案", "dept": "廣告部", "person": "🎨婕㚬, 🎨硯棋, 🎨芝翊, 🎨語桐", "project_budget": 1050000.0, "cost": 116506.0, "group_budget": 70000.0, "profit": -46506.0, "allocated": true, "month": "1月, 2月, 3月, 4月, 5月, 6月"}, {"team": "概念組", "name": "P3239 - 鳩摩羅什_片頭尾製作", "code": "P3239", "status": "已完成", "dept": "廣告部", "person": "🎨家綺, 🎨語桐", "project_budget": 333333.0, "cost": 78431.0, "group_budget": 8200.0, "profit": -70231.0, "allocated": true, "month": "3月"}, {"team": "概念組", "name": "P3374 - QUM_Chap.3", "code": "P3374", "status": "已完成", "dept": "廣告部", "person": "🎨芝翊", "project_budget": null, "cost": 20000.0, "group_budget": 50000.0, "profit": 30000.0, "allocated": true, "month": "3月"}, {"team": "概念組", "name": "P3414 - 男公館_片頭製作", "code": "P3414", "status": "結案", "dept": "廣告部", "person": "🎨芝翊", "project_budget": 52500.0, "cost": 35600.0, "group_budget": 5000.0, "profit": -30600.0, "allocated": true, "month": "3月"}, {"team": "概念組", "name": "P3441 - Innodisk2026", "code": "P3441", "status": "已完成", "dept": "廣告部", "person": "🎨婕㚬, 🎨芝翊", "project_budget": 1850000.0, "cost": 46150.0, "group_budget": 175000.0, "profit": 128850.0, "allocated": true, "month": "3月, 4月, 5月, 6月"}, {"team": "概念組", "name": "P3478 - Rog_20thAnniversaryLineup", "code": "P3478", "status": "飛奧", "dept": "廣告部", "person": "🎨士堯, 🎨婕㚬, 🎨家綺, 🎨芝翊", "project_budget": 4332258.0, "cost": 136856.0, "group_budget": 130000.0, "profit": -6856.0, "allocated": true, "month": "5月"}, {"team": "概念組", "name": "P3023 - 糖果星球節目動畫製作", "code": "P3023", "status": "已完成", "dept": "動畫部", "person": "🎨語桐", "project_budget": null, "cost": 10038.0, "group_budget": null, "profit": -10038.0, "allocated": false, "month": "1月"}, {"team": "概念組", "name": "P3135 - RogBrandVideo2026", "code": "P3135", "status": "結案", "dept": "動畫部", "person": "🎨家綺, 🎨語桐", "project_budget": 4713202.0, "cost": 407456.0, "group_budget": 400000.0, "profit": -7456.0, "allocated": true, "month": "1月, 2月, 3月, 4月, 5月, 6月"}, {"team": "概念組", "name": "P3139 - 佛光山寺「淨土洞窟」-淨土莊嚴廣袤 90秒 多媒體投影製作", "code": "P3139", "status": "飛奧", "dept": "動畫部", "person": "🎨語桐", "project_budget": null, "cost": 27471.0, "group_budget": 27471.0, "profit": 0.0, "allocated": true, "month": "1月, 2月, 3月, 4月"}, {"team": "概念組", "name": "P3271 - 新光保全形象影片", "code": "P3271", "status": "結案", "dept": "動畫部", "person": "🎨芝翊", "project_budget": 2640000.0, "cost": 186919.0, "group_budget": 205200.0, "profit": 18281.0, "allocated": true, "month": "1月, 2月, 3月"}, {"team": "概念組", "name": "P3427 - 地球館-CP4", "code": "P3427", "status": "進行中", "dept": "動畫部", "person": "🎨語桐", "project_budget": 6500000.0, "cost": 62125.0, "group_budget": 42886.0, "profit": -19239.0, "allocated": true, "month": "3月, 4月, 5月, 6月, 7月, 8月"}, {"team": "概念組", "name": "P3074 - 故宮_LED玉器案 (動畫部)", "code": "P3074", "status": "進行中", "dept": "動畫部", "person": "🎨婕㚬, 🎨芝翊, 🎨苡安, 🎨語桐", "project_budget": 2520000.0, "cost": 216863.0, "group_budget": null, "profit": -216863.0, "allocated": false, "month": "4月, 5月, 7月, 8月, 9月"}, {"team": "概念組", "name": "P3449 - PxPay_plus", "code": "P3449", "status": "已完成", "dept": "動畫部", "person": "🎨士堯, 🎨苡安, 🎨語桐", "project_budget": 1733000.0, "cost": 142919.0, "group_budget": null, "profit": -142919.0, "allocated": false, "month": "4月, 5月"}, {"team": "概念組", "name": "P3161 - 原創動畫節目：反派人力派遣影集製作", "code": "P3161", "status": "暫停", "dept": "動畫部", "person": "🎨家綺", "project_budget": 9600000.0, "cost": 79550.0, "group_budget": null, "profit": -79550.0, "allocated": false, "month": "5月"}, {"team": "概念組", "name": "P3462 - PorcelainMG", "code": "P3462", "status": "已完成", "dept": "動畫部", "person": "🎨芝翊, 🎨苡安", "project_budget": 465000.0, "cost": 47656.0, "group_budget": null, "profit": -47656.0, "allocated": false, "month": "5月"}, {"team": "概念組", "name": "P2893 - 犢影_黑白清道夫", "code": "P2893", "status": "已完成", "dept": "視效部", "person": "🎨婕㚬", "project_budget": null, "cost": 30750.0, "group_budget": null, "profit": -30750.0, "allocated": false, "month": "5月"}, {"team": "概念組", "name": "P3500 - Acer_PredatorLeague7", "code": "P3500", "status": "進行中", "dept": "視效部", "person": "🎨婕㚬, 🎨家綺, 🎨芝翊, 🎨語桐", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "5月, 6月, 7月, 8月"}, {"team": "概念組", "name": "P3457 - 國運之戰", "code": "P3457", "status": "已完成", "dept": "視效部", "person": "🎨士堯", "project_budget": null, "cost": 2375.0, "group_budget": null, "profit": -2375.0, "allocated": false, "month": null}, {"team": "導演組", "name": "P3230 - 泓德能源_企業影片(綠能未來)", "code": "P3230", "status": "結案", "dept": "前製部", "person": "🎬柏安", "project_budget": 2415000.0, "cost": 126300.0, "group_budget": 280000.0, "profit": 153700.0, "allocated": true, "month": "1月"}, {"team": "導演組", "name": "P3230 - 泓德能源_企業影片(綠寶日記本)", "code": "P3230", "status": "結案", "dept": "前製部", "person": "🎬劭謙", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "1月, 2月, 3月, 4月"}, {"team": "導演組", "name": "P3285 - 遊戲橘子_楓之谷_蓮&曉之陣動畫PV", "code": "P3285", "status": "結案", "dept": "前製部", "person": "🎬劭謙", "project_budget": 424200.0, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "1月"}, {"team": "導演組", "name": "P3333 - 202512_GiantAnytourXnNewtour", "code": "P3333", "status": "結案", "dept": "前製部", "person": "🎬阿晃", "project_budget": 345000.0, "cost": 37950.0, "group_budget": 150000.0, "profit": 112050.0, "allocated": true, "month": "1月, 2月"}, {"team": "導演組", "name": "P3378 - 薛之謙_萬獸之王演唱會(3D 躍)", "code": "P3378", "status": "結案", "dept": "前製部", "person": "🎬阿晃", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "1月"}, {"team": "導演組", "name": "P3413 - ROGEqualizerVideo", "code": "P3413", "status": "暫停", "dept": "前製部", "person": "🎬小高", "project_budget": 790500.0, "cost": 26625.0, "group_budget": 100000.0, "profit": 73375.0, "allocated": true, "month": "1月, 2月, 3月, 4月, 5月, 6月"}, {"team": "導演組", "name": "P3058 - Delta_IntroductionVideo", "code": "P3058", "status": "已完成", "dept": "廣告部", "person": "🎬阿晃", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "1月"}, {"team": "導演組", "name": "P3183 - Msi_RaiderA16HX16HXMAX", "code": "P3183", "status": "結案", "dept": "廣告部", "person": "🎬柏安", "project_budget": 1221150.0, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "1月, 2月"}, {"team": "導演組", "name": "P3255 - TASA_太空中心簡介影片", "code": "P3255", "status": "進行中", "dept": "廣告部", "person": "🎬阿晃", "project_budget": 2478000.0, "cost": 231081.0, "group_budget": null, "profit": -231081.0, "allocated": false, "month": "1月, 2月, 3月, 4月, 5月, 6月"}, {"team": "導演組", "name": "P3363 - Acer_Predator2026EsportsVideo", "code": "P3363", "status": "掰掰", "dept": "廣告部", "person": "🎬阿晃", "project_budget": null, "cost": 26737.0, "group_budget": null, "profit": -26737.0, "allocated": false, "month": "1月"}, {"team": "導演組", "name": "P3395 - Msi_TitanDragonEdition", "code": "P3395", "status": "結案", "dept": "廣告部", "person": "🎬劭謙", "project_budget": 1050000.0, "cost": null, "group_budget": 80000.0, "profit": 80000.0, "allocated": true, "month": "1月, 2月, 3月, 4月, 5月, 6月"}, {"team": "導演組", "name": "P3411 - TAITRA_2026ComputxUnbound", "code": "P3411", "status": "掰掰", "dept": "廣告部", "person": "🎬阿晃", "project_budget": 95238.0, "cost": 29425.0, "group_budget": 85714.0, "profit": 56289.0, "allocated": true, "month": "1月, 2月"}, {"team": "導演組", "name": "P3135 - RogBrandVideo2026", "code": "P3135", "status": "結案", "dept": "動畫部", "person": "🎬劭謙", "project_budget": 4713202.0, "cost": 59475.0, "group_budget": 200000.0, "profit": 140525.0, "allocated": true, "month": "1月, 2月, 3月, 4月, 5月, 6月"}, {"team": "導演組", "name": "P3139 - 佛光山寺「淨土洞窟」-淨土莊嚴廣袤 90秒 多媒體投影製作", "code": "P3139", "status": "飛奧", "dept": "動畫部", "person": "🎬柏安", "project_budget": null, "cost": 27750.0, "group_budget": -378000.0, "profit": -405750.0, "allocated": true, "month": "1月, 2月, 3月, 4月"}, {"team": "導演組", "name": "P3271 - 新光保全形象影片", "code": "P3271", "status": "結案", "dept": "動畫部", "person": "🎬阿晃", "project_budget": 2640000.0, "cost": 151913.0, "group_budget": 155000.0, "profit": 3087.0, "allocated": true, "month": "1月, 2月, 3月"}, {"team": "導演組", "name": "P3387 - Taiwantradeshows2026", "code": "P3387", "status": "結案", "dept": "前製部", "person": "🎬柏安", "project_budget": 380000.0, "cost": 9000.0, "group_budget": 100000.0, "profit": 91000.0, "allocated": true, "month": "2月"}, {"team": "導演組", "name": "P3422 - Garena新產品PV", "code": "P3422", "status": "進行中", "dept": "動畫部", "person": "🎬劭謙", "project_budget": 1898340.0, "cost": null, "group_budget": 100000.0, "profit": 100000.0, "allocated": true, "month": "2月, 3月, 4月, 5月, 6月"}, {"team": "導演組", "name": "P3331 - Montech_BrandVideo", "code": "P3331", "status": "掰掰", "dept": "廣告部", "person": "🎬劭謙", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "3月"}, {"team": "導演組", "name": "P3441 - Innodisk2026", "code": "P3441", "status": "已完成", "dept": "廣告部", "person": "🎬小高", "project_budget": 1850000.0, "cost": 141625.0, "group_budget": 350000.0, "profit": 208375.0, "allocated": true, "month": "3月, 4月, 5月, 6月"}, {"team": "導演組", "name": "P3446 - Msi_MegSeries", "code": "P3446", "status": "已完成", "dept": "廣告部", "person": "🎬阿晃", "project_budget": 1200000.0, "cost": 68437.0, "group_budget": null, "profit": -68437.0, "allocated": false, "month": "3月, 4月, 5月"}, {"team": "導演組", "name": "P3447 - Msi_Maestro900R", "code": "P3447", "status": "已完成", "dept": "廣告部", "person": "🎬阿晃", "project_budget": 795000.0, "cost": 26006.0, "group_budget": null, "profit": -26006.0, "allocated": false, "month": "3月, 4月, 5月"}, {"team": "導演組", "name": "P3448 - Msi_CoreliquidE15", "code": "P3448", "status": "已完成", "dept": "廣告部", "person": "🎬阿晃", "project_budget": 755000.0, "cost": 26919.0, "group_budget": null, "profit": -26919.0, "allocated": false, "month": "3月, 4月, 5月"}, {"team": "導演組", "name": "P3475 - Acer_2026TravelMateP614AI", "code": "P3475", "status": "已完成", "dept": "廣告部", "person": "🎬小高", "project_budget": 703500.0, "cost": 0.0, "group_budget": 20000.0, "profit": 20000.0, "allocated": true, "month": "3月, 4月, 5月"}, {"team": "導演組", "name": "P3427 - 地球館-CP4", "code": "P3427", "status": "進行中", "dept": "動畫部", "person": "🎬阿晃", "project_budget": 6500000.0, "cost": 121794.0, "group_budget": 83468.0, "profit": -38326.0, "allocated": true, "month": "3月, 4月, 5月, 6月, 7月, 8月"}, {"team": "導演組", "name": "P3438 - 2026 OPENDAY (MCC)", "code": "P3438", "status": "結案", "dept": "其他", "person": "🎬劭謙, 🎬小高", "project_budget": null, "cost": 21000.0, "group_budget": null, "profit": -21000.0, "allocated": false, "month": "3月, 4月"}, {"team": "導演組", "name": "未開 - 國父紀念館投影案", "code": null, "status": "暫停", "dept": "前製部", "person": "🎬小高", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "10月, 11月, 12月, 4月"}, {"team": "導演組", "name": "P2585 - 黑潮原創動畫-今日運勢大凶！", "code": "P2585", "status": "結案", "dept": "前製部", "person": "🎬柏安", "project_budget": null, "cost": 252000.0, "group_budget": null, "profit": -252000.0, "allocated": false, "month": "4月"}, {"team": "導演組", "name": "P3464 - ROG_20周年顯卡", "code": "P3464", "status": "進行中", "dept": "前製部", "person": "🎬小高", "project_budget": null, "cost": 42500.0, "group_budget": null, "profit": -42500.0, "allocated": false, "month": "4月, 5月, 6月"}, {"team": "導演組", "name": "P3466 - ROG_GC701 PC Controll", "code": "P3466", "status": "進行中", "dept": "廣告部", "person": "🎬劭謙", "project_budget": 949830.0, "cost": null, "group_budget": 80000.0, "profit": 80000.0, "allocated": true, "month": "4月, 5月, 6月, 7月"}, {"team": "導演組", "name": "P3074 - 故宮_LED玉器案 (動畫部)", "code": "P3074", "status": "進行中", "dept": "動畫部", "person": "🎬阿晃", "project_budget": 2520000.0, "cost": 153094.0, "group_budget": null, "profit": -153094.0, "allocated": false, "month": "4月, 5月, 7月, 8月, 9月"}, {"team": "導演組", "name": "P3326 - 智崴_IPR_i-Ride_飛越極地冰原_動畫製作", "code": "P3326", "status": "暫停", "dept": "視效部", "person": "🎬劭謙", "project_budget": 5000000.0, "cost": 75075.0, "group_budget": null, "profit": -75075.0, "allocated": false, "month": "4月"}, {"team": "導演組", "name": "P3509 - 瀚草工具討論", "code": "P3509", "status": "暫停", "dept": "其他", "person": "🎬小高", "project_budget": null, "cost": 6750.0, "group_budget": null, "profit": -6750.0, "allocated": false, "month": "4月, 5月"}, {"team": "導演組", "name": "作品集剪輯", "code": null, "status": "已完成", "dept": "前製部", "person": "🎬議文", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "5月"}, {"team": "導演組", "name": "P3516 - RogT1聯名顯卡", "code": "P3516", "status": "進行中", "dept": "前製部", "person": "🎬阿晃", "project_budget": null, "cost": 44256.0, "group_budget": null, "profit": -44256.0, "allocated": false, "month": "5月, 6月"}, {"team": "導演組", "name": "P3517 - 星星電力形象影片", "code": "P3517", "status": "提案中", "dept": "前製部", "person": "🎬議文, 🎬阿晃", "project_budget": 1500000.0, "cost": 146256.0, "group_budget": null, "profit": -146256.0, "allocated": false, "month": "5月, 6月"}, {"team": "導演組", "name": "Positive 起死回生之路。", "code": null, "status": "暫停", "dept": "前製部", "person": "🎬小高", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "5月, 6月"}, {"team": "導演組", "name": "P3478 - Rog_20thAnniversaryLineup", "code": "P3478", "status": "飛奧", "dept": "廣告部", "person": "🎬劭謙", "project_budget": 4332258.0, "cost": null, "group_budget": 60000.0, "profit": 60000.0, "allocated": true, "month": "5月"}, {"team": "導演組", "name": "P3501 - ROG_New ROG Xbox Ally", "code": "P3501", "status": "已完成", "dept": "廣告部", "person": "🎬小高", "project_budget": 1628151.0, "cost": 34625.0, "group_budget": null, "profit": -34625.0, "allocated": false, "month": "5月, 6月"}, {"team": "導演組", "name": "桃園鐵道_沉浸劇場動畫", "code": null, "status": "掰掰", "dept": "動畫部", "person": "🎬議文", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "5月"}, {"team": "導演組", "name": "P3161 - 原創動畫節目：反派人力派遣影集製作", "code": "P3161", "status": "暫停", "dept": "動畫部", "person": "🎬柏安", "project_budget": 9600000.0, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "5月"}, {"team": "導演組", "name": "P3500 - Acer_PredatorLeague7", "code": "P3500", "status": "進行中", "dept": "視效部", "person": "🎬劭謙", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "5月, 6月, 7月, 8月"}, {"team": "導演組", "name": "大凶幕後剪輯", "code": null, "status": "已完成", "dept": null, "person": "🎬議文", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "5月"}, {"team": "導演組", "name": "大凶花絮剪輯", "code": null, "status": "飛奧", "dept": "前製部", "person": "🎬劭謙, 🎬議文", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "6月"}, {"team": "導演組", "name": "奇談島航_行銷宣傳片", "code": null, "status": "提案中", "dept": "前製部", "person": "🎬劭謙", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "6月, 7月"}, {"team": "導演組", "name": "P3572 - MsiVenture15", "code": "P3572", "status": "提案中", "dept": "前製部", "person": "🎬小高", "project_budget": 800000.0, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "6月, 7月"}, {"team": "導演組", "name": "P3577 - 高鐵_裸視3D", "code": "P3577", "status": "掰掰", "dept": "前製部", "person": "🎬阿晃", "project_budget": null, "cost": 8669.0, "group_budget": null, "profit": -8669.0, "allocated": false, "month": "6月, 7月"}, {"team": "導演組", "name": "P3583 - RogThorPsuEdition20", "code": "P3583", "status": "進行中", "dept": "前製部", "person": "🎬劭謙", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "6月, 7月"}, {"team": "導演組", "name": "P3590 - BenQEWsreiesVideo", "code": "P3590", "status": "進行中", "dept": "前製部", "person": "🎬議文", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "6月, 7月"}, {"team": "導演組", "name": "世芯電子", "code": null, "status": "未開始", "dept": "廣告部", "person": "🎬阿晃", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "6月, 7月, 8月"}, {"team": "導演組", "name": "P3595 - ROG_Holiday Campaign", "code": "P3595", "status": "未開始", "dept": "廣告部", "person": "🎬劭謙", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "6月, 7月, 8月"}, {"team": "導演組", "name": "高雄電影短片補助", "code": null, "status": "進行中", "dept": null, "person": "🎬小高", "project_budget": null, "cost": null, "group_budget": null, "profit": 0.0, "allocated": false, "month": "6月"}, {"team": "導演組", "name": "P3263 - 屏東海生館 rov影片製作", "code": "P3263", "status": "暫停", "dept": "動畫部", "person": "🎬阿晃", "project_budget": null, "cost": 41831.0, "group_budget": null, "profit": -41831.0, "allocated": false, "month": null}]
 ;
 
-const deptOrder = ['前製部','廣告部','動畫部','視效部','其他'];
-const deptRanges = {"其他": {"count": 0, "min": null, "median": null, "max": null, "sum": 0}, "前製部": {"count": 12, "min": 40000.0, "median": 402100.0, "max": 2851000.0, "sum": 10130700.0}, "動畫部": {"count": 8, "min": 465000.0, "median": 2580000.0, "max": 9600000.0, "sum": 30069542.0}, "廣告部": {"count": 17, "min": 52500.0, "median": 1050000.0, "max": 4332258.0, "sum": 23735425.0}, "視效部": {"count": 1, "min": 5000000.0, "median": 5000000.0, "max": 5000000.0, "sum": 5000000.0}};
-
-function fmt(n){
-  if(n===null||n===undefined) return '—';
-  return '$' + Math.round(n).toLocaleString('en-US');
+let RECORDS = [];
+let nextId = 1;
+function cloneInitial(){
+  RECORDS = INITIAL_RECORDS.map(r=>({...r, _id: nextId++}));
 }
+cloneInitial();
+
+let isDirty = false;
+function markDirty(){
+  isDirty = true;
+  const b = document.getElementById('edit-banner');
+  b.classList.add('dirty');
+  b.querySelector('span:nth-child(2)').innerHTML = '<b>有尚未匯出的變更</b> — 請記得按「匯出 JSON」備份，本頁不會自動保存。';
+}
+function markClean(){
+  isDirty = false;
+  const b = document.getElementById('edit-banner');
+  b.classList.remove('dirty');
+  b.querySelector('span:nth-child(2)').innerHTML = '<b>編輯模式已啟用</b> — 直接點擊表格中的數字或文字即可修改，新增的專案會立即納入所有統計。';
+}
+window.addEventListener('beforeunload', (e)=>{
+  if(isDirty){ e.preventDefault(); e.returnValue=''; }
+});
+
+/* ====================== HELPERS ====================== */
 function fmtPlain(n){
-  if(n===null||n===undefined) return '—';
-  return Math.round(n).toLocaleString('en-US');
+  if(n===null||n===undefined||isNaN(n)) return '—';
+  const sign = n<0 ? '−' : '';
+  return sign + Math.round(Math.abs(n)).toLocaleString('en-US');
+}
+function fmtSigned(n){
+  if(n===null||n===undefined||isNaN(n)) return '—';
+  return (n>=0?'+':'−') + Math.round(Math.abs(n)).toLocaleString('en-US');
+}
+function fmtWan(n){ // 萬元, 1 decimal
+  if(n===null||n===undefined||isNaN(n)) return '—';
+  const v = n/10000;
+  return (v>=0?'+':'−') + Math.abs(v).toFixed(1) + '萬';
+}
+function escapeHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function parseNum(str){
+  if(str===null||str===undefined) return null;
+  const cleaned = String(str).replace(/[,\s$]/g,'').trim();
+  if(cleaned==='' ) return null;
+  const v = parseFloat(cleaned);
+  return isNaN(v) ? null : v;
+}
+// derive profit for a record given current cost/group_budget/allocated
+function deriveProfit(r){
+  const cost = r.cost || 0;
+  if(r.allocated){
+    const gb = r.group_budget===null||r.group_budget===undefined ? 0 : r.group_budget;
+    return gb - cost;
+  } else {
+    return -cost;
+  }
+}
+function getUniqueProjects(records){
+  const map = new Map();
+  records.forEach(r=>{
+    const key = r.name || ('__row_'+r._id);
+    if(!map.has(key)) map.set(key, {dept:null, budget:null});
+    const e = map.get(key);
+    if(!e.dept && r.dept) e.dept = r.dept;
+    if((e.budget===null||e.budget===undefined) && r.project_budget!=null) e.budget = r.project_budget;
+  });
+  return Array.from(map.values());
+}
+function median(arr){
+  if(arr.length===0) return null;
+  const s = [...arr].sort((a,b)=>a-b);
+  const mid = Math.floor(s.length/2);
+  return s.length%2 ? s[mid] : (s[mid-1]+s[mid])/2;
 }
 
-document.getElementById('mh-count').textContent = '71 件';
+const DEPT_ORDER = ['前製部','廣告部','動畫部','視效部','其他'];
+const STATUS_COLORS = {
+  '已完成':'#74C49A','結案':'#52BAC7','進行中':'#E0A248','暫停':'#6B7080',
+  '掰掰':'#E2685A','飛奧':'#9A6BD6','提案中':'#C7C4BC','未開始':'#3D414B','未標示':'#444'
+};
+const DEPT_OPTIONS = ['前製部','廣告部','動畫部','視效部','其他'];
+const TEAM_OPTIONS = ['概念組','導演組'];
 
-// ===== Render department range scope =====
-(function(){
+/* ====================== MASTER RENDER ====================== */
+function renderAll(){
+  renderMasthead();
+  renderKPIs();
+  renderInsight();
+  renderTeamPanels();
+  renderDeptScope();
+  renderLeaderboards();
+  renderStatusDist();
+  renderTable();
+}
+
+function renderMasthead(){
+  const uniq = getUniqueProjects(RECORDS);
+  document.getElementById('mh-count').textContent = `${RECORDS.length} 列・${uniq.length} 件獨立專案`;
+}
+
+/* ---------- KPI ---------- */
+function renderKPIs(){
+  const uniq = getUniqueProjects(RECORDS);
+  const knownBudget = uniq.filter(u=>u.budget!=null);
+  const totalKnownBudget = knownBudget.reduce((s,u)=>s+u.budget,0);
+
+  const teams = ['概念組','導演組'];
+  const teamStats = {};
+  teams.forEach(t=>{
+    const rows = RECORDS.filter(r=>r.team===t);
+    const allocRows = rows.filter(r=>r.allocated);
+    const cost = allocRows.reduce((s,r)=>s+(r.cost||0),0);
+    const budget = allocRows.reduce((s,r)=>s+(r.group_budget||0),0);
+    teamStats[t] = {count:rows.length, allocCount:allocRows.length, cost, budget,
+      rate: budget>0 ? (budget-cost)/budget*100 : null};
+  });
+
+  const html = `
+    <div class="kpi-card">
+      <div class="kpi-label">獨立專案數</div>
+      <div class="kpi-value">${uniq.length}<span class="unit">件</span></div>
+      <div class="kpi-sub">概念組 ${RECORDS.filter(r=>r.team==='概念組').length} 筆・導演組 ${RECORDS.filter(r=>r.team==='導演組').length} 筆，已去除同案重複登記</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">已知客戶總預算</div>
+      <div class="kpi-value">${fmtWan(totalKnownBudget).replace(/[+−]/,'')}<span class="unit"></span></div>
+      <div class="kpi-sub">${knownBudget.length} / ${uniq.length} 件專案有登記金額</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">概念組　已分配組內預算達成率</div>
+      <div class="kpi-value" style="color:var(--concept)">${teamStats['概念組'].rate!=null ? teamStats['概念組'].rate.toFixed(1):'—'}<span class="unit">${teamStats['概念組'].rate!=null?'%':''}</span></div>
+      <div class="kpi-sub">${teamStats['概念組'].allocCount} 件已分配：成本 ${fmtWan(teamStats['概念組'].cost).replace('+','').replace('−','')} ／ 預算 ${fmtWan(teamStats['概念組'].budget).replace('+','').replace('−','')}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">導演組　已分配組內預算達成率</div>
+      <div class="kpi-value" style="color:var(--director)">${teamStats['導演組'].rate!=null ? teamStats['導演組'].rate.toFixed(1):'—'}<span class="unit">${teamStats['導演組'].rate!=null?'%':''}</span></div>
+      <div class="kpi-sub">${teamStats['導演組'].allocCount} 件已分配：成本 ${fmtWan(teamStats['導演組'].cost).replace('+','').replace('−','')} ／ 預算 ${fmtWan(teamStats['導演組'].budget).replace('+','').replace('−','')}</div>
+    </div>`;
+  document.getElementById('kpi-strip').innerHTML = html;
+}
+
+/* ---------- INSIGHT CALLOUT ---------- */
+function renderInsight(){
+  const total = RECORDS.length;
+  const pending = RECORDS.filter(r=>!r.allocated);
+  const allocated = RECORDS.filter(r=>r.allocated);
+  const pendingDeficit = pending.reduce((s,r)=>s+deriveProfit(r),0); // all negative or 0
+  const allocatedProfit = allocated.reduce((s,r)=>s+deriveProfit(r),0);
+  const pendingC = pending.filter(r=>r.team==='概念組').length;
+  const pendingD = pending.filter(r=>r.team==='導演組').length;
+
+  const html = `
+    <span class="mark">重要</span>
+    <div>
+      <p>目前共有 <strong>${pendingC} 件概念組、${pendingD} 件導演組專案</strong>尚未分配「組內預算」。系統會把這些專案的成本直接列為等額負收益，這部分屬於暫記赤字，<strong>並非真實虧損</strong>，會隨著預算分配陸續確定而改善。</p>
+      <p>把已分配與未分配兩類分開看：已分配預算的 ${allocated.length} 件專案目前合計${allocatedProfit>=0?'淨賺':'淨虧'} <strong>${fmtWan(Math.abs(allocatedProfit))}</strong>；其餘 ${pending.length} 件待分配專案目前的成本暫計赤字為 <strong>${fmtWan(Math.abs(pendingDeficit))}</strong>，會在預算分配完成後重新結算。</p>
+      <div class="figs">
+        <div class="fig"><b class="mono" style="color:var(--loss)">${fmtWan(pendingDeficit)}</b><span>未分配預算專案的「暫時赤字」（非真實虧損）</span></div>
+        <div class="fig"><b class="mono" style="color:${allocatedProfit>=0?'var(--gain)':'var(--loss)'}">${fmtWan(allocatedProfit)}</b><span>已分配預算專案的「真實淨收益」</span></div>
+        <div class="fig"><b class="mono">${pending.length}</b><span>件專案合計仍待組內分配預算（占 ${total} 件中的 ${total? Math.round(pending.length/total*100):0}%）</span></div>
+      </div>
+    </div>`;
+  document.getElementById('insight-callout').innerHTML = html;
+}
+
+/* ---------- TEAM PANELS ---------- */
+function renderTeamPanels(){
+  function panel(team, cls, emoji){
+    const rows = RECORDS.filter(r=>r.team===team);
+    const allRows = rows;
+    const allCost = allRows.reduce((s,r)=>s+(r.cost||0),0);
+    const allProfit = allRows.reduce((s,r)=>s+deriveProfit(r),0);
+    const allocRows = rows.filter(r=>r.allocated);
+    const allocCost = allocRows.reduce((s,r)=>s+(r.cost||0),0);
+    const allocBudget = allocRows.reduce((s,r)=>s+(r.group_budget||0),0);
+    const allocProfit = allocRows.reduce((s,r)=>s+deriveProfit(r),0);
+    const pct = rows.length ? (allocRows.length/rows.length*100) : 0;
+    return `
+      <div class="team-panel ${cls}">
+        <div class="team-title">
+          <h3>${emoji} ${team}</h3>
+          <span class="tag mono">${rows.length} 件專案</span>
+        </div>
+        <div class="team-rows">
+          <div class="team-row"><span class="k">全部專案・總成本</span><span class="v mono">$${fmtPlain(allCost)}</span></div>
+          <div class="team-row"><span class="k">全部專案・總收益（含暫計）</span><span class="v mono ${allProfit<0?'loss':'gain'}">${fmtSigned(allProfit)}</span></div>
+          <div class="team-divider"></div>
+          <div class="team-row"><span class="k">已分配預算・專案數</span><span class="v mono">${allocRows.length} 件</span></div>
+          <div class="team-row"><span class="k">已分配預算・成本</span><span class="v mono">$${fmtPlain(allocCost)}</span></div>
+          <div class="team-row"><span class="k">已分配預算・組內預算</span><span class="v mono">$${fmtPlain(allocBudget)}</span></div>
+          <div class="team-row"><span class="k">已分配預算・真實收益</span><span class="v mono ${allocProfit<0?'loss':'gain'}">${fmtSigned(allocProfit)}</span></div>
+        </div>
+        <div class="alloc-bar-wrap">
+          <div class="alloc-bar-label"><span>已分配預算比例</span><span class="mono">${allocRows.length} / ${rows.length}（${pct.toFixed(0)}%）</span></div>
+          <div class="alloc-bar"><div class="alloc-bar-fill" style="width:${pct}%"></div></div>
+        </div>
+      </div>`;
+  }
+  document.getElementById('team-grid').innerHTML =
+    panel('概念組','concept','🎨') + panel('導演組','director','🎬');
+}
+
+/* ---------- DEPT RANGE SCOPE ---------- */
+function renderDeptScope(){
+  const uniq = getUniqueProjects(RECORDS);
+  const byDept = {};
+  DEPT_ORDER.forEach(d=>byDept[d]=[]);
+  uniq.forEach(u=>{
+    const d = DEPT_ORDER.includes(u.dept) ? u.dept : '其他';
+    if(u.budget!=null) byDept[d].push(u.budget);
+  });
+  const ranges = {};
+  DEPT_ORDER.forEach(d=>{
+    const vals = byDept[d];
+    if(vals.length===0){ ranges[d]={count:0,min:null,median:null,max:null,sum:0}; return; }
+    ranges[d] = {count:vals.length, min:Math.min(...vals), max:Math.max(...vals), median:median(vals), sum:vals.reduce((s,v)=>s+v,0)};
+  });
+  const globalMax = Math.max(1, ...DEPT_ORDER.map(d=>ranges[d].max||0));
+
   const list = document.getElementById('scope-list');
-  const globalMax = Math.max(...deptOrder.map(d=> (deptRanges[d] && deptRanges[d].max) || 0 ));
-  deptOrder.forEach(d=>{
-    const r = deptRanges[d];
+  list.innerHTML = '';
+  DEPT_ORDER.forEach(d=>{
+    const r = ranges[d];
     const row = document.createElement('div');
     row.className = 'scope-row';
-    if(!r || !r.max){
+    if(!r.max){
       row.innerHTML = `
         <div class="scope-dept">${d}<small>0 件有金額</small></div>
         <div class="scope-track"><div class="scope-ruler"></div></div>
@@ -745,19 +966,18 @@ document.getElementById('mh-count').textContent = '71 件';
       list.appendChild(row);
       return;
     }
-    const minPct = (r.min/globalMax*100);
-    const maxPct = (r.max/globalMax*100);
-    const medPct = (r.median/globalMax*100);
-    const spanPct = maxPct - minPct;
-    const medianLeftPct = spanPct > 0.01 ? ((medPct-minPct)/spanPct*100) : 50;
+    const minPct = r.min/globalMax*100;
+    const maxPct = r.max/globalMax*100;
+    const medPct = r.median/globalMax*100;
+    const span = maxPct-minPct;
+    const medLeft = span>0.01 ? (medPct-minPct)/span*100 : 50;
     row.innerHTML = `
       <div class="scope-dept">${d}<small>${r.count} 件有金額</small></div>
       <div class="scope-track">
         <div class="scope-ruler"></div>
-        <div class="scope-bar" style="left:${minPct}%;width:${Math.max(spanPct,1.5)}%">
-          <span class="cap start"></span>
-          <span class="cap end"></span>
-          ${spanPct > 0.01 ? `<span class="median-tick" style="left:${medianLeftPct}%"></span>` : ''}
+        <div class="scope-bar" style="left:${minPct}%;width:${Math.max(span,1.5)}%">
+          <span class="cap start"></span><span class="cap end"></span>
+          ${span>0.01? `<span class="median-tick" style="left:${medLeft}%"></span>`:''}
         </div>
       </div>
       <div class="scope-figs">
@@ -766,25 +986,89 @@ document.getElementById('mh-count').textContent = '71 件';
       </div>`;
     list.appendChild(row);
   });
-})();
+}
 
-// ===== Status distribution =====
-(function(){
-  const statusColors = {
-    '已完成':'#74C49A','結案':'#52BAC7','進行中':'#E0A248','暫停':'#6B7080',
-    '掰掰':'#E2685A','飛奧':'#9A6BD6','提案中':'#C7C4BC','未開始':'#3D414B'
-  };
+/* ---------- LEADERBOARDS ---------- */
+function renderLeaderboards(){
+  function topList(team, allocatedFlag, sortDesc){
+    return RECORDS.filter(r=>r.team===team && r.allocated===allocatedFlag)
+      .map(r=>({...r, _profit: deriveProfit(r)}))
+      .sort((a,b)=> sortDesc ? b._profit-a._profit : a._profit-b._profit)
+      .slice(0,5);
+  }
+  function rowsHtml(list, valueKey){
+    if(list.length===0) return `<div class="lb-row"><span class="lb-rank">—</span><span class="lb-name">（無資料）</span><span class="lb-val"></span></div>`;
+    return list.map((r,i)=>{
+      const val = valueKey==='profit' ? r._profit : (r.cost||0);
+      const cls = valueKey==='profit' ? (val>=0?'gain':'loss') : 'loss';
+      const display = valueKey==='profit' ? fmtSigned(val) : ('$'+fmtPlain(Math.abs(val)));
+      const shortName = (r.name||'').replace(/^P\d+\s*-\s*/,'');
+      return `<div class="lb-row"><span class="lb-rank">${String(i+1).padStart(2,'0')}</span><span class="lb-name">${escapeHtml(shortName)}<span class="dept-tag">${r.dept||'未分類'}</span></span><span class="lb-val ${cls}">${display}</span></div>`;
+    }).join('');
+  }
+
+  const cTop = topList('概念組', true, true);
+  const dTop = topList('導演組', true, true);
+  const cLoss = topList('概念組', false, false);
+  const dLoss = topList('導演組', false, false);
+
+  const allocatedCount = RECORDS.filter(r=>r.allocated).length;
+  const pendingCount = RECORDS.filter(r=>!r.allocated).length;
+  document.getElementById('lb-desc').textContent =
+    `僅納入已取得組內預算的專案（${allocatedCount} 件），其餘 ${pendingCount} 件因尚未分配，暫不列入「最賺」排行，避免誤判為虧損。`;
+
+  document.getElementById('lb-grid').innerHTML = `
+    <div class="lb-col">
+      <div class="lb-col-head"><span>概念組　最賺 Top 5</span><span>收益</span></div>
+      ${rowsHtml(cTop,'profit')}
+      <div class="lb-note">僅統計已分配組內預算的專案。</div>
+    </div>
+    <div class="lb-col">
+      <div class="lb-col-head"><span>導演組　最賺 Top 5</span><span>收益</span></div>
+      ${rowsHtml(dTop,'profit')}
+      <div class="lb-note">僅統計已分配組內預算的專案。</div>
+    </div>
+    <div class="lb-col">
+      <div class="lb-col-head"><span>概念組　待分配預算中成本最高 Top 5</span><span>成本</span></div>
+      ${rowsHtml(cLoss,'cost')}
+      <div class="lb-note">此處「成本」非虧損，是尚未取得組內預算前的暫記赤字。</div>
+    </div>
+    <div class="lb-col">
+      <div class="lb-col-head"><span>導演組　待分配預算中成本最高 Top 5</span><span>成本</span></div>
+      ${rowsHtml(dLoss,'cost')}
+      <div class="lb-note">此處「成本」非虧損，是尚未取得組內預算前的暫記赤字。</div>
+    </div>`;
+
+  // anomaly detection: negative group_budget
+  const anomalies = RECORDS.filter(r=>r.allocated && r.group_budget!=null && r.group_budget<0);
+  const box = document.getElementById('anomaly-box');
+  if(anomalies.length){
+    box.classList.add('show');
+    box.innerHTML = '<b>⚠ 資料異常提醒：</b>以下專案的「組內預算」登記為負值，可能是填寫錯誤，建議確認後修正：<br>' +
+      anomalies.map(r=>`・${escapeHtml(r.name)}（${r.team}，組內預算 $${fmtPlain(r.group_budget)}）`).join('<br>');
+  } else {
+    box.classList.remove('show');
+    box.innerHTML = '';
+  }
+}
+
+/* ---------- STATUS DISTRIBUTION ---------- */
+function renderStatusDist(){
+  document.getElementById('status-pair').innerHTML = `
+    <div><h4>概念組（${RECORDS.filter(r=>r.team==='概念組').length} 件）</h4><div class="status-bar" id="status-bar-c"></div></div>
+    <div><h4>導演組（${RECORDS.filter(r=>r.team==='導演組').length} 件）</h4><div class="status-bar" id="status-bar-d"></div></div>`;
+
   function build(team, elId){
     const rows = RECORDS.filter(r=>r.team===team);
     const counts = {};
     rows.forEach(r=>{ const s=r.status||'未標示'; counts[s]=(counts[s]||0)+1; });
-    const total = rows.length;
+    const total = rows.length || 1;
     const bar = document.getElementById(elId);
     Object.entries(counts).sort((a,b)=>b[1]-a[1]).forEach(([status,count])=>{
       const seg = document.createElement('div');
       seg.className = 'status-seg';
       seg.style.width = (count/total*100)+'%';
-      seg.style.background = statusColors[status] || '#444';
+      seg.style.background = STATUS_COLORS[status] || '#444';
       seg.title = status+'：'+count+' 件';
       bar.appendChild(seg);
     });
@@ -794,83 +1078,166 @@ document.getElementById('mh-count').textContent = '71 件';
   const dCounts = build('導演組','status-bar-d');
   const allStatuses = Array.from(new Set([...Object.keys(cCounts),...Object.keys(dCounts)]));
   const legend = document.getElementById('status-legend');
+  legend.innerHTML = '';
   allStatuses.forEach(s=>{
     const item = document.createElement('div');
     item.className='item';
-    item.innerHTML = `<span class="swatch" style="background:${statusColors[s]||'#444'}"></span>${s}　概念${cCounts[s]||0}／導演${dCounts[s]||0}`;
+    item.innerHTML = `<span class="swatch" style="background:${STATUS_COLORS[s]||'#444'}"></span>${s}　概念${cCounts[s]||0}／導演${dCounts[s]||0}`;
     legend.appendChild(item);
   });
-})();
+}
 
-// ===== Table =====
+/* ---------- TABLE ---------- */
 let currentSort = {key:'profit', dir:-1};
-let filterTeam = 'all';
-let filterAlloc = 'all';
-let searchQ = '';
+let filterTeam='all', filterAlloc='all', searchQ='';
 
 function getFiltered(){
   return RECORDS.filter(r=>{
     if(filterTeam!=='all' && r.team!==filterTeam) return false;
     if(filterAlloc==='yes' && !r.allocated) return false;
     if(filterAlloc==='no' && r.allocated) return false;
-    if(searchQ && !r.name.toLowerCase().includes(searchQ.toLowerCase())) return false;
+    if(searchQ && !(r.name||'').toLowerCase().includes(searchQ.toLowerCase())) return false;
     return true;
   });
 }
 
 function renderTable(){
-  const data = getFiltered();
+  const data = getFiltered().map(r=>({...r, profit: deriveProfit(r)}));
   data.sort((a,b)=>{
     let av=a[currentSort.key], bv=b[currentSort.key];
-    if(typeof av === 'string' || av===null){ av = av||''; bv = bv||''; return currentSort.dir*String(av).localeCompare(String(bv)); }
-    av = av===null?-Infinity:av; bv = bv===null?-Infinity:bv;
+    if(typeof av==='string' || av===null || typeof bv==='string' || bv===null){
+      av=(av===null||av===undefined)?'':String(av); bv=(bv===null||bv===undefined)?'':String(bv);
+      return currentSort.dir*av.localeCompare(bv);
+    }
+    av = av===null?-Infinity:av; bv=bv===null?-Infinity:bv;
     return currentSort.dir*(av-bv);
   });
+
   const tbody = document.getElementById('table-body');
   tbody.innerHTML = '';
   data.forEach(r=>{
     const tr = document.createElement('tr');
+    tr.dataset.id = r._id;
     const teamCls = r.team==='概念組' ? 'concept' : 'director';
     const teamIcon = r.team==='概念組' ? '🎨' : '🎬';
     const profitCellCls = !r.allocated ? 'pending' : (r.profit>0?'gain':(r.profit<0?'loss':''));
     const profitDisplay = !r.allocated
-      ? (r.profit!==null ? '−'+fmtPlain(Math.abs(r.profit))+'（待分配）' : '—')
-      : (r.profit!==null ? (r.profit>=0?'+':'−')+fmtPlain(Math.abs(r.profit)) : '—');
+      ? ('−'+fmtPlain(Math.abs(r.profit))+'（待分配）')
+      : fmtSigned(r.profit);
+
     tr.innerHTML = `
-      <td class="team-cell"><span class="team-pill ${teamCls}">${teamIcon} ${r.team}</span></td>
-      <td><span class="pname">${r.code?'<span class=\"code\">'+r.code+'</span>':''}${escapeHtml(r.name.replace(/^P\d+\s*-\s*/,''))}</span></td>
-      <td>${r.dept || '<span style="color:var(--mute-2)">未分類</span>'}</td>
-      <td><span class="status-pill">${r.status||'—'}</span></td>
-      <td class="num">${r.project_budget!==null? '$'+fmtPlain(r.project_budget):'—'}</td>
-      <td class="num">${r.cost!==null? '$'+fmtPlain(r.cost):'—'}</td>
-      <td class="num">${r.group_budget!==null? '$'+fmtPlain(r.group_budget):'<span style=\"color:var(--mute-2)\">未分配</span>'}</td>
+      <td class="editable-td">
+        <select class="cell-input" data-field="team">
+          ${TEAM_OPTIONS.map(t=>`<option value="${t}" ${t===r.team?'selected':''}>${t==='概念組'?'🎨':'🎬'} ${t}</option>`).join('')}
+        </select>
+      </td>
+      <td class="editable-td"><input class="cell-input text-left" data-field="name" value="${escapeHtml(r.name||'')}" placeholder="專案名稱"></td>
+      <td class="editable-td">
+        <select class="cell-input" data-field="dept">
+          <option value="" ${!r.dept?'selected':''}>未分類</option>
+          ${DEPT_OPTIONS.map(d=>`<option value="${d}" ${d===r.dept?'selected':''}>${d}</option>`).join('')}
+        </select>
+      </td>
+      <td class="editable-td"><input class="cell-input text-left" data-field="status" value="${escapeHtml(r.status||'')}" placeholder="狀態" list="status-options"></td>
+      <td class="editable-td"><input class="cell-input" data-field="project_budget" value="${r.project_budget!=null?Math.round(r.project_budget):''}" placeholder="—"></td>
+      <td class="editable-td"><input class="cell-input" data-field="cost" value="${r.cost!=null?Math.round(r.cost):''}" placeholder="—"></td>
+      <td class="editable-td" style="display:flex;align-items:center;gap:6px;">
+        ${r.allocated
+          ? `<input class="cell-input" data-field="group_budget" value="${r.group_budget!=null?Math.round(r.group_budget):''}" placeholder="0" style="flex:1">`
+          : `<span class="alloc-toggle is-pending" data-action="toggle-alloc">未分配・點擊輸入</span>`}
+      </td>
       <td class="num ${profitCellCls}">${profitDisplay}</td>
+      <td style="text-align:center"><button class="row-del-btn" data-action="delete-row" title="刪除此列">×</button></td>
     `;
     tbody.appendChild(tr);
   });
-  document.getElementById('table-count-foot').textContent = `顯示 ${data.length} / ${RECORDS.length} 筆`;
 
-  document.querySelectorAll('thead th').forEach(th=>{
+  document.getElementById('table-count-foot').textContent = `顯示 ${data.length} / ${RECORDS.length} 筆`;
+  document.querySelectorAll('thead th[data-key]').forEach(th=>{
     th.classList.toggle('sorted', th.dataset.key===currentSort.key);
     const arrow = th.querySelector('.arrow');
-    if(th.dataset.key===currentSort.key){
-      arrow.textContent = currentSort.dir===1 ? '▴' : '▾';
-    }
+    if(arrow) arrow.textContent = th.dataset.key===currentSort.key ? (currentSort.dir===1?'▴':'▾') : '▾';
   });
 }
-function escapeHtml(s){
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
 
-document.querySelectorAll('thead th').forEach(th=>{
+/* ---------- TABLE EVENT DELEGATION ---------- */
+document.getElementById('table-body').addEventListener('change', (e)=>{
+  const tr = e.target.closest('tr');
+  if(!tr) return;
+  const id = Number(tr.dataset.id);
+  const rec = RECORDS.find(r=>r._id===id);
+  if(!rec) return;
+  const field = e.target.dataset.field;
+  if(!field) return;
+
+  if(field==='project_budget' || field==='cost' || field==='group_budget'){
+    rec[field] = parseNum(e.target.value);
+  } else {
+    rec[field] = e.target.value || null;
+  }
+  markDirty();
+  renderAll();
+});
+
+document.getElementById('table-body').addEventListener('click', (e)=>{
+  const tr = e.target.closest('tr');
+  if(!tr) return;
+  const id = Number(tr.dataset.id);
+
+  if(e.target.dataset.action==='delete-row'){
+    if(confirm('確定要刪除這個專案列嗎？')){
+      RECORDS = RECORDS.filter(r=>r._id!==id);
+      markDirty();
+      renderAll();
+    }
+    return;
+  }
+  if(e.target.dataset.action==='toggle-alloc'){
+    const rec = RECORDS.find(r=>r._id===id);
+    if(rec){
+      rec.allocated = true;
+      rec.group_budget = rec.group_budget ?? 0;
+      markDirty();
+      renderAll();
+      // focus the new input
+      setTimeout(()=>{
+        const newTr = document.querySelector(`tr[data-id="${id}"]`);
+        const inp = newTr && newTr.querySelector('input[data-field="group_budget"]');
+        if(inp) inp.focus();
+      },0);
+    }
+  }
+});
+
+document.getElementById('btn-add-row').addEventListener('click', ()=>{
+  RECORDS.push({
+    _id: nextId++,
+    team:'概念組', name:'', code:null, status:'提案中', dept:null, person:null,
+    project_budget:null, cost:null, group_budget:null, allocated:false, month:null
+  });
+  markDirty();
+  renderAll();
+  setTimeout(()=>{
+    const rows = document.querySelectorAll('#table-body tr');
+    const lastRow = rows[rows.length-1];
+    if(lastRow){
+      lastRow.classList.add('new-row');
+      lastRow.scrollIntoView({behavior:'smooth', block:'center'});
+      const inp = lastRow.querySelector('input[data-field="name"]');
+      if(inp) inp.focus();
+    }
+  },0);
+});
+
+/* ---------- SORT / FILTER / SEARCH ---------- */
+document.querySelectorAll('thead th[data-key]').forEach(th=>{
   th.addEventListener('click', ()=>{
     const key = th.dataset.key;
-    if(currentSort.key===key){ currentSort.dir*=-1; }
-    else { currentSort = {key, dir: -1}; }
+    if(currentSort.key===key) currentSort.dir*=-1;
+    else currentSort = {key, dir:-1};
     renderTable();
   });
 });
-
 document.querySelectorAll('[data-filter-team]').forEach(chip=>{
   chip.addEventListener('click', ()=>{
     document.querySelectorAll('[data-filter-team]').forEach(c=>c.classList.remove('active'));
@@ -892,7 +1259,93 @@ document.getElementById('search-input').addEventListener('input', (e)=>{
   renderTable();
 });
 
-renderTable();
+/* ---------- EXPORT / IMPORT / RESET ---------- */
+function downloadBlob(content, filename, type){
+  const blob = new Blob([content], {type});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+document.getElementById('btn-export-json').addEventListener('click', ()=>{
+  const exportData = RECORDS.map(({_id, ...rest})=>rest);
+  downloadBlob(JSON.stringify(exportData, null, 1), `專案預算資料_${new Date().toISOString().slice(0,10)}.json`, 'application/json');
+  markClean();
+});
+document.getElementById('btn-export-csv').addEventListener('click', ()=>{
+  const headers = ['team','name','code','status','dept','person','project_budget','cost','group_budget','allocated','month'];
+  const headerLabels = ['團隊','專案名稱','代號','狀態','部門','人員','客戶總預算','成本','組內預算','已分配','月份'];
+  const rows = [headerLabels.join(',')];
+  RECORDS.forEach(r=>{
+    const row = headers.map(h=>{
+      let v = r[h];
+      if(v===null||v===undefined) v='';
+      v = String(v).replace(/"/g,'""');
+      if(v.includes(',')||v.includes('\n')) v = `"${v}"`;
+      return v;
+    });
+    rows.push(row.join(','));
+  });
+  downloadBlob('\uFEFF'+rows.join('\n'), `專案預算資料_${new Date().toISOString().slice(0,10)}.csv`, 'text/csv;charset=utf-8');
+  markClean();
+});
+document.getElementById('btn-import').addEventListener('click', ()=>{
+  document.getElementById('file-import').click();
+});
+document.getElementById('file-import').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (evt)=>{
+    try{
+      const parsed = JSON.parse(evt.target.result);
+      if(!Array.isArray(parsed)) throw new Error('格式錯誤：應為陣列');
+      RECORDS = parsed.map(r=>({
+        team: r.team || '概念組',
+        name: r.name || '',
+        code: r.code ?? null,
+        status: r.status ?? null,
+        dept: r.dept ?? null,
+        person: r.person ?? null,
+        project_budget: r.project_budget ?? null,
+        cost: r.cost ?? null,
+        group_budget: r.group_budget ?? null,
+        allocated: !!r.allocated,
+        month: r.month ?? null,
+        _id: nextId++
+      }));
+      renderAll();
+      markClean();
+      alert(`已匯入 ${RECORDS.length} 筆專案資料。`);
+    }catch(err){
+      alert('匯入失敗，請確認檔案是否為本頁匯出的 JSON 格式。\n錯誤訊息：'+err.message);
+    }
+    e.target.value = '';
+  };
+  reader.readAsText(file, 'utf-8');
+});
+document.getElementById('btn-reset').addEventListener('click', ()=>{
+  if(confirm('確定要還原成最初的分析資料嗎？目前所有編輯都會消失（建議先匯出備份）。')){
+    cloneInitial();
+    renderAll();
+    markClean();
+  }
+});
+
+/* ---------- STATUS DATALIST ---------- */
+const dl = document.createElement('datalist');
+dl.id = 'status-options';
+['已完成','結案','進行中','暫停','掰掰','飛奧','提案中','未開始'].forEach(s=>{
+  const opt = document.createElement('option');
+  opt.value = s;
+  dl.appendChild(opt);
+});
+document.body.appendChild(dl);
+
+/* ---------- INIT ---------- */
+renderAll();
 </script>
 </body>
 </html>
