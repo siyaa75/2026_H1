@@ -300,7 +300,7 @@
   .lb-rank{font-family:'IBM Plex Mono',monospace;color:var(--mute-2);font-size:12px;}
   .lb-name{color:var(--paper-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .lb-name .dept-tag{color:var(--mute);font-size:11px;margin-left:6px;}
-  .lb-val{font-family:'IBM Plex Mono',monospace;font-weight:600;white-space:nowrap;}
+  .lb-val{font-family:'IBM Plex Mono',monospace;font-weight:600;white-space:nowrap;text-align:right;}
   .lb-val.gain{color:var(--gain);}
   .lb-val.loss{color:var(--loss);}
   .lb-note{
@@ -718,6 +718,7 @@
             <th data-key="project_budget" style="text-align:right">客戶總預算<span class="arrow">▾</span></th>
             <th data-key="cost" style="text-align:right">成本<span class="arrow">▾</span></th>
             <th data-key="group_budget" style="text-align:right">組內預算<span class="arrow">▾</span></th>
+            <th data-key="dir_pct" style="text-align:right">導演預算占比<span class="arrow">▾</span></th>
             <th data-key="profit" style="text-align:right">收益／暫計<span class="arrow">▾</span></th>
             <th style="width:34px"></th>
           </tr>
@@ -853,6 +854,18 @@ function profitCategory(r){
   if(r.allocated && r.group_budget!=null && r.group_budget<0) return 'anomaly';
   if(!r.allocated) return 'pending';
   return deriveProfit(r) >= 0 ? 'profit' : 'loss';
+}
+
+// 導演預算占比：組內預算 ÷ 專案總預算（僅導演組有此指標，概念組原始資料無此欄位）
+function dirBudgetPct(r){
+  if(r.team!=='導演組') return null;
+  if(!r.project_budget || r.project_budget<=0) return null;
+  return (r.group_budget||0) / r.project_budget * 100;
+}
+// 盈虧占專案總預算百分比（用於排行榜的「效率」排序，不受專案規模大小影響）
+function profitPct(r){
+  if(!r.project_budget || r.project_budget<=0) return null;
+  return deriveProfit(r) / r.project_budget * 100;
 }
 
 /* ====================== MASTER RENDER ====================== */
@@ -1044,74 +1057,99 @@ function renderDeptScope(){
 
 /* ---------- LEADERBOARDS ---------- */
 function renderLeaderboards(){
-  function topList(team, allocatedFlag, sortDesc){
-    return RECORDS.filter(r=>r.team===team && r.allocated===allocatedFlag)
+  // 概念組：維持「盈虧金額」排行
+  function topAmountList(team, sortDesc, lossOnly){
+    return RECORDS.filter(r=>r.team===team && r.allocated)
       .map(r=>({...r, _profit: deriveProfit(r)}))
+      .filter(r=> lossOnly ? r._profit<0 : true)
       .sort((a,b)=> sortDesc ? b._profit-a._profit : a._profit-b._profit)
       .slice(0,5);
   }
-  function topLossList(team){
-    return RECORDS.filter(r=>r.team===team && r.allocated)
+  // 導演組：改用「導演預算占全案預算比例」排行（不是盈虧百分比）
+  function topDirPctList(team, sortDesc){
+    return RECORDS.filter(r=>r.team===team && r.allocated && r.project_budget && r.project_budget>0)
+      .map(r=>({...r, _profit: deriveProfit(r), _dirPct: dirBudgetPct(r)}))
+      .sort((a,b)=> sortDesc ? b._dirPct-a._dirPct : a._dirPct-b._dirPct)
+      .slice(0,5);
+  }
+  function topCostList(team){
+    return RECORDS.filter(r=>r.team===team && !r.allocated)
       .map(r=>({...r, _profit: deriveProfit(r)}))
-      .filter(r=>r._profit<0)
       .sort((a,b)=>a._profit-b._profit)
       .slice(0,5);
   }
-  function rowsHtml(list, valueKey){
+  function anomalyMarkOf(r){
+    const isAnomaly = r.allocated && r.group_budget!=null && r.group_budget<0;
+    return isAnomaly ? `<span title="此筆組內預算為負值，疑似資料異常" style="color:${CAT_COLORS.anomaly.color};margin-left:5px;">⚠</span>` : '';
+  }
+  function rowsHtmlAmount(list){
     if(list.length===0) return `<div class="lb-row"><span class="lb-rank">—</span><span class="lb-name">（無資料）</span><span class="lb-val"></span></div>`;
     return list.map((r,i)=>{
-      const val = valueKey==='profit' ? r._profit : (r.cost||0);
-      const color = valueKey==='profit' ? (val>=0?CAT_COLORS.profit.color:CAT_COLORS.loss.color) : CAT_COLORS.pending.color;
-      const display = valueKey==='profit' ? fmtSigned(val) : ('$'+fmtPlain(Math.abs(val)));
+      const color = r._profit>=0?CAT_COLORS.profit.color:CAT_COLORS.loss.color;
       const shortName = (r.name||'').replace(/^P\d+\s*-\s*/,'');
       const dc = deptColor(r.dept);
-      const isAnomaly = r.allocated && r.group_budget!=null && r.group_budget<0;
-      const anomalyMark = isAnomaly ? `<span title="此筆組內預算為負值，疑似資料異常" style="color:${CAT_COLORS.anomaly.color};margin-left:5px;">⚠</span>` : '';
-      return `<div class="lb-row"><span class="lb-rank">${String(i+1).padStart(2,'0')}</span><span class="lb-name">${escapeHtml(shortName)}<span class="dept-tag" style="background:${dc}22;color:${dc};border-radius:8px;padding:1px 7px;">${r.dept||'未分類'}</span>${anomalyMark}</span><span class="lb-val" style="color:${color}">${display}</span></div>`;
+      return `<div class="lb-row"><span class="lb-rank">${String(i+1).padStart(2,'0')}</span><span class="lb-name">${escapeHtml(shortName)}<span class="dept-tag" style="background:${dc}22;color:${dc};border-radius:8px;padding:1px 7px;">${r.dept||'未分類'}</span>${anomalyMarkOf(r)}</span><span class="lb-val" style="color:${color}">${fmtSigned(r._profit)}</span></div>`;
+    }).join('');
+  }
+  // 導演組占比排行：只顯示「導演預算占全案預算比例」，不顯示盈虧正負百分比
+  function rowsHtmlDirPct(list){
+    if(list.length===0) return `<div class="lb-row"><span class="lb-rank">—</span><span class="lb-name">（無可比較的專案，需有客戶總預算資料）</span><span class="lb-val"></span></div>`;
+    return list.map((r,i)=>{
+      const color = r._dirPct>=0?CAT_COLORS.profit.color:CAT_COLORS.loss.color;
+      const shortName = (r.name||'').replace(/^P\d+\s*-\s*/,'');
+      const dc = deptColor(r.dept);
+      return `<div class="lb-row"><span class="lb-rank">${String(i+1).padStart(2,'0')}</span><span class="lb-name">${escapeHtml(shortName)}<span class="dept-tag" style="background:${dc}22;color:${dc};border-radius:8px;padding:1px 7px;">${r.dept||'未分類'}</span>${anomalyMarkOf(r)}</span><span class="lb-val" style="color:${color}">${r._dirPct.toFixed(1)}%<small style="display:block;font-weight:400;color:var(--mute);font-size:10.5px;">$${fmtPlain(r.group_budget||0)} / $${fmtPlain(r.project_budget)}</small></span></div>`;
+    }).join('');
+  }
+  function rowsHtmlCost(list){
+    if(list.length===0) return `<div class="lb-row"><span class="lb-rank">—</span><span class="lb-name">（無資料）</span><span class="lb-val"></span></div>`;
+    return list.map((r,i)=>{
+      const shortName = (r.name||'').replace(/^P\d+\s*-\s*/,'');
+      const dc = deptColor(r.dept);
+      return `<div class="lb-row"><span class="lb-rank">${String(i+1).padStart(2,'0')}</span><span class="lb-name">${escapeHtml(shortName)}<span class="dept-tag" style="background:${dc}22;color:${dc};border-radius:8px;padding:1px 7px;">${r.dept||'未分類'}</span></span><span class="lb-val" style="color:${CAT_COLORS.pending.color}">$${fmtPlain(Math.abs(r.cost||0))}</span></div>`;
     }).join('');
   }
 
-  const cTop = topList('概念組', true, true);
-  const dTop = topList('導演組', true, true);
-  const cLossReal = topLossList('概念組');
-  const dLossReal = topLossList('導演組');
-  const cPending = topList('概念組', false, false);
-  const dPending = topList('導演組', false, false);
+  const cTop = topAmountList('概念組', true, false);
+  const cLossReal = topAmountList('概念組', false, true);
+  const dTop = topDirPctList('導演組', true);
+  const dLossReal = topDirPctList('導演組', false);
+  const cPending = topCostList('概念組');
+  const dPending = topCostList('導演組');
 
-  const allocatedCount = RECORDS.filter(r=>r.allocated).length;
   const pendingCount = RECORDS.filter(r=>!r.allocated).length;
   document.getElementById('lb-desc').textContent =
-    `「最賺」「最虧」僅統計已取得組內預算的 ${allocatedCount} 件專案的真實盈虧；其餘 ${pendingCount} 件尚未分配預算，另列在「待分配中成本最高」，避免誤判為虧損。`;
+    `概念組依「盈虧金額」排行；導演組依「導演預算占全案預算比例」排行（非盈虧百分比，因導演組多筆成本資料缺失，以預算占比反映該組在專案中的分配份量）。兩組皆僅統計已分配組內預算的專案，其餘 ${pendingCount} 件尚未分配，另列在「待分配中成本最高」。`;
 
   document.getElementById('lb-grid').innerHTML = `
     <div class="lb-col">
       <div class="lb-col-head"><span>概念組　最賺 Top 5</span><span>收益</span></div>
-      ${rowsHtml(cTop,'profit')}
-      <div class="lb-note">僅統計已分配組內預算的專案。</div>
+      ${rowsHtmlAmount(cTop)}
+      <div class="lb-note">僅統計已分配組內預算的專案，依盈虧金額排序。</div>
     </div>
     <div class="lb-col">
-      <div class="lb-col-head"><span>導演組　最賺 Top 5</span><span>收益</span></div>
-      ${rowsHtml(dTop,'profit')}
-      <div class="lb-note">僅統計已分配組內預算的專案。</div>
+      <div class="lb-col-head"><span>導演組　最賺 Top 5（導演預算占比最高）</span><span>占比</span></div>
+      ${rowsHtmlDirPct(dTop)}
+      <div class="lb-note">依「導演組內預算 ÷ 客戶總預算」排序，占比越高代表該組在此案分得的預算份量越大。</div>
     </div>
     <div class="lb-col">
       <div class="lb-col-head"><span>概念組　最虧 Top 5</span><span>收益</span></div>
-      ${rowsHtml(cLossReal,'profit')}
+      ${rowsHtmlAmount(cLossReal)}
       <div class="lb-note">已分配組內預算、結算後仍虧損的真實案例。</div>
     </div>
     <div class="lb-col">
-      <div class="lb-col-head"><span>導演組　最虧 Top 5</span><span>收益</span></div>
-      ${rowsHtml(dLossReal,'profit')}
-      <div class="lb-note">已分配組內預算、結算後仍虧損的真實案例。${dLossReal.some(r=>r.allocated && r.group_budget<0)?' ⚠ 含一筆組內預算為負值的異常資料，詳見下方提醒。':''}</div>
+      <div class="lb-col-head"><span>導演組　最虧 Top 5（導演預算占比最低）</span><span>占比</span></div>
+      ${rowsHtmlDirPct(dLossReal)}
+      <div class="lb-note">依「導演組內預算 ÷ 客戶總預算」排序，占比越低代表該組在此案分得的預算份量越小。${dLossReal.some(r=>r.allocated && r.group_budget<0)?' ⚠ 含一筆組內預算為負值的異常資料，詳見下方提醒。':''}</div>
     </div>
     <div class="lb-col">
       <div class="lb-col-head"><span>概念組　待分配預算中成本最高 Top 5</span><span>成本</span></div>
-      ${rowsHtml(cPending,'cost')}
+      ${rowsHtmlCost(cPending)}
       <div class="lb-note">此處「成本」非虧損，是尚未取得組內預算前的暫記赤字（黃色＝待分配）。</div>
     </div>
     <div class="lb-col">
       <div class="lb-col-head"><span>導演組　待分配預算中成本最高 Top 5</span><span>成本</span></div>
-      ${rowsHtml(dPending,'cost')}
+      ${rowsHtmlCost(dPending)}
       <div class="lb-note">此處「成本」非虧損，是尚未取得組內預算前的暫記赤字（黃色＝待分配）。</div>
     </div>`;
 
@@ -1145,7 +1183,7 @@ function getFiltered(){
 }
 
 function renderTable(){
-  const data = getFiltered().map(r=>({...r, profit: deriveProfit(r)}));
+  const data = getFiltered().map(r=>({...r, profit: deriveProfit(r), dir_pct: dirBudgetPct(r)}));
   data.sort((a,b)=>{
     let av=a[currentSort.key], bv=b[currentSort.key];
     if(typeof av==='string' || av===null || typeof bv==='string' || bv===null){
@@ -1170,6 +1208,9 @@ function renderTable(){
     const profitDisplay = !r.allocated
       ? ('−'+fmtPlain(Math.abs(r.profit))+'（待分配）')
       : fmtSigned(r.profit);
+    const dirPctDisplay = r.dir_pct!=null
+      ? `${r.dir_pct.toFixed(1)}%`
+      : (r.team==='導演組' ? '<span style="color:var(--mute-2)">—</span>' : '<span style="color:var(--mute-2)" title="概念組無此欄位">－</span>');
 
     tr.innerHTML = `
       <td class="editable-td">
@@ -1195,6 +1236,7 @@ function renderTable(){
           ? `<input class="cell-input" data-field="group_budget" value="${r.group_budget!=null?Math.round(r.group_budget):''}" placeholder="0">`
           : `<span class="alloc-toggle is-pending" data-action="toggle-alloc">未分配・點擊輸入</span>`}
       </td>
+      <td class="num">${dirPctDisplay}</td>
       <td class="num" style="color:${catInfo.color}">
         <span class="dot" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${catInfo.color};margin-right:7px;vertical-align:middle;"></span>${profitDisplay}
       </td>
